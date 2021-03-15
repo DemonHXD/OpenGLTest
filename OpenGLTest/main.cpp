@@ -1,9 +1,9 @@
 ﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include "Window/MyWindow.h"
+#include "Shader/Shader.h"
 #include <iostream>
 using namespace std;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 void processInput(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -12,58 +12,61 @@ void processInput(GLFWwindow* window) {
 }
 
 int main() {
-	glfwInit();
-	// 设置主版本和次版本号
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	// 使用核心模式
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	MyWindow myWindow(3, 800, 600);
+	GLFWwindow* wndIns = myWindow.getWindowIns();
+	Shader shader("E:/openGL/openGL_C++_Pro/OpenGLTest/作业Code/五彩斑斓的三角形/shaderFile/vertexShader.vs",
+		"E:/openGL/openGL_C++_Pro/OpenGLTest/作业Code/五彩斑斓的三角形/shaderFile/fragmentShader.fs");
+	float vertices[] = {
+			// 位置              // 颜色
+		 0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // 右下
+		-0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // 左下
+		 0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // 顶部
+	};
+	unsigned int VAO, VBO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
 
-	// 创建窗口 设置窗口的宽高以及标题
-	GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-	if (window == NULL) {
-		cout << "Faild to create GLFW window" << endl;
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-		glfwTerminate();
-		return -1;
-	}
-	// 将窗口设置为当前的线程的上下文
-	glfwMakeContextCurrent(window);
+	// 位置属性
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+	// 颜色属性
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
-	// 初始化glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		cout << "Failed to initialize GLAD" << endl;
-		return -1;
-	}
+	glBindVertexArray(VAO);
 
-	// 设置渲染窗口(视口)的宽高
-	glViewport(0, 0, 800, 600);
-
-	// 注册每次调整窗口大小时触发的回调事件
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-	// glfwWindowShouldClose 用来判断窗口是否被关闭，没有被关闭则一直进行渲染循环
-	// 渲染循环
-	while (!glfwWindowShouldClose(window)) {
+	 //渲染循环
+	while (!glfwWindowShouldClose(wndIns)) {
 
 		// 输入
-		processInput(window);
+		processInput(wndIns);
 
 		//渲染指令……
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		shader.use();
+
+		float timeValue = glfwGetTime();
+		float value = sin(timeValue) / 4.0f + 0.5f;
+		shader.setFloat("updateColor", value);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 		// 检查并调用事件，交换缓冲
 		glfwPollEvents();
-		glfwSwapBuffers(window);
+		glfwSwapBuffers(wndIns);
 	}
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	shader.deleteShader();
 
 	// 渲染循环结束后我们需要正确释放/删除之前分配的资源
 	glfwTerminate();
 
 	return 0;
-}
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	glViewport(0, 0, width, height);
 }

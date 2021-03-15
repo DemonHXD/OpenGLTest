@@ -21,10 +21,30 @@
     <ClCompile Include="include\glad.c">
       <Filter>头文件</Filter>
     </ClCompile>
+    <ClCompile Include="Shader\Shader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\MyWindow.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\stb_image.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Shader\Shader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\MyWindow.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\fragmentShader.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\vertexShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

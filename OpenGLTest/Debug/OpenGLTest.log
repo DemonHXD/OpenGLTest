@@ -1,2 +1,3 @@
 ﻿  main.cpp
+e:\opengl\opengl_c++_pro\opengltest\opengltest\main.cpp(54): warning C4244: “初始化”: 从“double”转换到“float”，可能丢失数据
   OpenGLTest.vcxproj -> E:\openGL\openGL_C++_Pro\OpenGLTest\Debug\OpenGLTest.exe

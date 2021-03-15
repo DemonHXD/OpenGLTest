@@ -133,9 +133,17 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <ItemGroup>
     <ClCompile Include="include\glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Shader\Shader.cpp" />
+    <ClCompile Include="Window\MyWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="Window\MyWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\fragmentShader.fs" />
+    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\vertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
