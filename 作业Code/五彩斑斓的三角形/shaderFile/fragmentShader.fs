@@ -6,8 +6,5 @@ uniform vec4 updateColor;
 
 void main()
 {
-	FragColor = vec4(ourColor.r + updateColor.r, 
-	ourColor.g + updateColor.g, 
-	ourColor.b + updateColor.b, 
-	1.0);
+	FragColor = vec4(ourColor, 1.0) + updateColor;
 }
