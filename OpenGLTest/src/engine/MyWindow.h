@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-typedef void(*UpdateFun)(...);
+typedef void(*UpdateFun)();
 class MyWindow
 {
 public:

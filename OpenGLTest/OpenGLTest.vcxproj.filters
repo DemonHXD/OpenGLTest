@@ -27,7 +27,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="include\glad.c">
+    <ClCompile Include="src\include\glad.c">
       <Filter>头文件</Filter>
     </ClCompile>
     <ClCompile Include="src\main.cpp">
@@ -38,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="src\render\Shader.cpp">
       <Filter>源文件\render</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\Camera.cpp">
+      <Filter>源文件\engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +58,9 @@
     </ClInclude>
     <ClInclude Include="src\render\Shader.h">
       <Filter>源文件\render</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\Camera.h">
+      <Filter>源文件\engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

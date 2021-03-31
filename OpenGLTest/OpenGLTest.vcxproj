@@ -72,6 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>E:\openGL\OpenGLtemplate\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <LibraryPath>E:\openGL\OpenGLtemplate\include;$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86</LibraryPath>
+    <ReferencePath>E:\openGL\openGL_C++_Pro\OpenGLTest\OpenGLTest\src\include\;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,6 +80,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\openGL\openGL_C++_Pro\OpenGLTest\OpenGLTest\src\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +133,8 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\glad.c" />
+    <ClCompile Include="src\include\glad.c" />
+    <ClCompile Include="src\engine\Camera.cpp" />
     <ClCompile Include="src\engine\MyWindow.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\render\Shader.cpp" />
@@ -139,6 +142,7 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <ItemGroup>
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Shader\Shader.h" />
+    <ClInclude Include="src\engine\Camera.h" />
     <ClInclude Include="src\engine\MyWindow.h" />
     <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="Window\MyWindow.h" />
