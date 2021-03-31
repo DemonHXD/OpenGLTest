@@ -13,19 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="源文件\engine">
+      <UniqueIdentifier>{83dd2110-e3c3-464b-8f9f-6469917fee31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\render">
+      <UniqueIdentifier>{b9051a3d-0c9f-4f1d-b006-844084c184fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\common">
+      <UniqueIdentifier>{7966b5c3-e089-4a0e-8305-4d11ff66da76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\include">
+      <UniqueIdentifier>{1db5d772-1b71-4235-9dce-97a8fe053dca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="include\glad.c">
       <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="Shader\Shader.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Window\MyWindow.cpp">
-      <Filter>源文件</Filter>
+    <ClCompile Include="src\engine\MyWindow.cpp">
+      <Filter>源文件\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\render\Shader.cpp">
+      <Filter>源文件\render</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +49,12 @@
     </ClInclude>
     <ClInclude Include="Window\MyWindow.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\MyWindow.h">
+      <Filter>源文件\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\render\Shader.h">
+      <Filter>源文件\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
