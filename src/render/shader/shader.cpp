@@ -1,4 +1,8 @@
-﻿#include "Shader.h"
+﻿#include <glad/glad.h>
+#include "shader.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
@@ -35,17 +39,17 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	unsigned int vertexShader, fragmentShader;
 	vertexShader = createShaderForType(vShaderCoder, "vertexShader", GL_VERTEX_SHADER);
 	fragmentShader = createShaderForType(fShaderCoder, "fragmentShader", GL_FRAGMENT_SHADER);
-	ID = createShaderProgram(2, vertexShader, fragmentShader);
+	shaderID = createShaderProgram(2, vertexShader, fragmentShader);
 }
 
 void Shader::chackShaderProgramCreate()
 {
 	int  success;
 	char infoLog[512];
-	glGetProgramiv(ID, GL_LINK_STATUS, &success);
+	glGetProgramiv(shaderID, GL_LINK_STATUS, &success);
 	if (!success) {
 		// 用于获取错误消息，存储在infoLog字符数组中
-		glGetProgramInfoLog(ID, 512, NULL, infoLog);
+		glGetProgramInfoLog(shaderID, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::shaderProgram::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 }
@@ -93,30 +97,5 @@ unsigned int Shader::createShaderProgram(int shaderCount, ...)
 
 void Shader::use()
 {
-	glUseProgram(ID);
-}
-
-void Shader::setBool(const std::string &name, bool value) const
-{
-	glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value);
-}
-void Shader::setInt(const std::string &name, int value) const
-{
-	glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
-}
-void Shader::setFloat(const std::string &name, float value) const
-{
-	glUniform4f(glGetUniformLocation(ID, name.c_str()), 0.0f, value, 0.0f, 1.0f);
-}
-void Shader::setMat2(const std::string &name, const glm::mat2 &mat) const
-{
-	glUniformMatrix2fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-}
-void Shader::setMat3(const std::string &name, const glm::mat3 &mat) const
-{
-	glUniformMatrix3fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
-}
-void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
-{
-	glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+	glUseProgram(shaderID);
 }
