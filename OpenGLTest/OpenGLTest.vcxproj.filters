@@ -30,16 +30,16 @@
     <ClCompile Include="src\include\glad.c">
       <Filter>头文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\main.cpp">
+    <ClCompile Include="..\src\main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\MyWindow.cpp">
-      <Filter>源文件\engine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\render\Shader.cpp">
+    <ClCompile Include="..\src\render\Shader.cpp">
       <Filter>源文件\render</Filter>
     </ClCompile>
-    <ClCompile Include="src\engine\Camera.cpp">
+    <ClCompile Include="..\src\engine\Camera.cpp">
+      <Filter>源文件\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\engine\MyWindow.cpp">
       <Filter>源文件\engine</Filter>
     </ClCompile>
   </ItemGroup>
@@ -53,21 +53,24 @@
     <ClInclude Include="Window\MyWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\engine\MyWindow.h">
-      <Filter>源文件\engine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\render\Shader.h">
+    <ClInclude Include="..\src\render\Shader.h">
       <Filter>源文件\render</Filter>
     </ClInclude>
-    <ClInclude Include="src\engine\Camera.h">
+    <ClInclude Include="..\src\engine\Camera.h">
+      <Filter>源文件\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\engine\MyWindow.h">
       <Filter>源文件\engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\fragmentShader.fs">
+    <None Include="..\asset\fragmentShader.fs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\vertexShader.vs">
+    <None Include="..\asset\fragmentShader2.fs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\asset\vertexShader.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

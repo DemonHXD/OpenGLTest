@@ -133,23 +133,24 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\include\glad.c" />
-    <ClCompile Include="src\engine\Camera.cpp" />
-    <ClCompile Include="src\engine\MyWindow.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\render\Shader.cpp" />
+    <ClCompile Include="..\src\engine\Camera.cpp" />
+    <ClCompile Include="..\src\engine\MyWindow.cpp" />
+    <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\render\Shader.cpp" />
+    <ClCompile Include="..\dev\include\glad.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\engine\Camera.h" />
+    <ClInclude Include="..\src\engine\MyWindow.h" />
+    <ClInclude Include="..\src\render\Shader.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="Shader\Shader.h" />
-    <ClInclude Include="src\engine\Camera.h" />
-    <ClInclude Include="src\engine\MyWindow.h" />
-    <ClInclude Include="src\render\Shader.h" />
     <ClInclude Include="Window\MyWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\fragmentShader.fs" />
-    <None Include="..\作业Code\五彩斑斓的三角形\shaderFile\vertexShader.vs" />
+    <None Include="..\asset\fragmentShader.fs" />
+    <None Include="..\asset\fragmentShader2.fs" />
+    <None Include="..\asset\vertexShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -4,7 +4,7 @@
 #include "render/Shader.h"
 #include "engine/MyWindow.h"
 #include "engine/Camera.h"
-#include "include/stb_image.h"
+#include <stb_image.h> 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -67,8 +67,8 @@ int main() {
 
 	glfwSetInputMode(windowIns, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glEnable(GL_DEPTH_TEST);
-	Shader ourShader("../OpenGLTest/asset/vertexShader.vs",
-		"../OpenGLTest/asset/fragmentShader.fs");
+	Shader ourShader("../asset/vertexShader.vs",
+		"../asset/fragmentShader.fs");
 	float vertices[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
@@ -151,7 +151,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load("../OpenGLTest/asset/container.jpg", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("../asset/container.jpg", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -169,7 +169,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	data = stbi_load("../OpenGLTest/asset/awesomeface.png", &width, &height, &nrChannels, 0);
+	data = stbi_load("../asset/awesomeface.png", &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
