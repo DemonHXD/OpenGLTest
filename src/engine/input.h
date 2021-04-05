@@ -6,13 +6,9 @@ struct GLFWwindow;
 class Input
 {
 public:
-	Input(GLFWwindow* window);
-	~Input() = default;
-
-	void openListen();
-
-private:
-	GLFWwindow* m_window;
+	virtual void processInput(GLFWwindow* window);
+	virtual void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+	virtual void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };
 
 #endif

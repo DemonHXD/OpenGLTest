@@ -2,12 +2,17 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-Input::Input(GLFWwindow* window):
-	m_window(window)
+void Input::processInput(GLFWwindow* window)
 {
+
 }
 
-void Input::openListen()
+void Input::mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+
+}
+
+void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 
 }

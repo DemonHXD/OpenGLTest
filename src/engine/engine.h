@@ -3,12 +3,12 @@
 
 
 #include "../common/singleton.h"
+#include "input.h"
 
 struct GLFWwindow;
-class Input;
 
 //typedef void(*UpdateFun)();
-class Engine
+class Engine : public Input
 {
 public:
 	Engine() = default;
@@ -24,13 +24,14 @@ public:
 	void run();
 	void deleteRes();
 
+	void processInput(GLFWwindow* window) override;
+
 	GLFWwindow* getWindowIns() const {
 		return m_window;
 	}
 
 private:
 	GLFWwindow* m_window = nullptr;
-	Input* m_input = nullptr;
 };
 #endif // !_ENGINE_H
 

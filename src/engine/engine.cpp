@@ -8,9 +8,16 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
 }
 
+void Engine::processInput(GLFWwindow* window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		glfwSetWindowShouldClose(window, true);
+	}
+}
+
 void Engine::initEngine()
 {
-	this->m_input = new Input(this->m_window);
+	
 }
 
 bool Engine::initWindow(unsigned int width, unsigned int height)
@@ -49,12 +56,10 @@ void Engine::run()
 	// 渲染循环
 	while (!glfwWindowShouldClose(m_window)) {
 
+		processInput(m_window);
 		//渲染指令……
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// 开启事件监听(鼠标/键盘/事件)
-		this->m_input->openListen();
 
 		// 检查并调用事件，交换缓冲
 		glfwPollEvents();
