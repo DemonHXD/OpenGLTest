@@ -135,20 +135,18 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
   <ItemGroup>
     <ClCompile Include="..\src\engine\camera.cpp" />
     <ClCompile Include="..\src\engine\engine.cpp" />
-    <ClCompile Include="..\src\engine\input.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\dev\include\glad.c" />
-    <ClCompile Include="..\src\render\shader\shader.cpp" />
-    <ClCompile Include="..\src\render\shader\shaderUtils.cpp" />
+    <ClCompile Include="..\src\render\shader.cpp" />
+    <ClCompile Include="..\src\render\texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\common\math.h" />
     <ClInclude Include="..\src\common\singleton.h" />
     <ClInclude Include="..\src\engine\camera.h" />
     <ClInclude Include="..\src\engine\engine.h" />
-    <ClInclude Include="..\src\engine\input.h" />
-    <ClInclude Include="..\src\render\shader\shader.h" />
-    <ClInclude Include="..\src\render\shader\shaderUtils.h" />
+    <ClInclude Include="..\src\render\shader.h" />
+    <ClInclude Include="..\src\render\texture.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\asset\fragmentShader.fs" />

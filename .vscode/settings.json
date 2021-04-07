@@ -1,0 +1,18 @@
+{
+    "files.associations": {
+        "*.json": "json",
+        "*.layout": "html",
+        "*.bts": "plaintext",
+        "xstring": "cpp",
+        "exception": "cpp",
+        "fstream": "cpp",
+        "istream": "cpp",
+        "memory": "cpp",
+        "ostream": "cpp",
+        "type_traits": "cpp",
+        "xfacet": "cpp",
+        "xlocale": "cpp",
+        "xmemory0": "cpp",
+        "*.rh": "cpp"
+    }
+}

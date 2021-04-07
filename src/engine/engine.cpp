@@ -2,17 +2,9 @@
 #include "Engine.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "input.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
-}
-
-void Engine::processInput(GLFWwindow* window)
-{
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
 }
 
 void Engine::initEngine()
@@ -56,7 +48,6 @@ void Engine::run()
 	// 渲染循环
 	while (!glfwWindowShouldClose(m_window)) {
 
-		processInput(m_window);
 		//渲染指令……
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

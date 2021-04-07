@@ -1,14 +1,10 @@
 ﻿#ifndef _ENGINE_H
 #define _ENGINE_H
 
-
-#include "../common/singleton.h"
-#include "input.h"
-
 struct GLFWwindow;
 
 //typedef void(*UpdateFun)();
-class Engine : public Input
+class Engine
 {
 public:
 	Engine() = default;
@@ -23,8 +19,6 @@ public:
 	bool initWindow(unsigned int width, unsigned int height);
 	void run();
 	void deleteRes();
-
-	void processInput(GLFWwindow* window) override;
 
 	GLFWwindow* getWindowIns() const {
 		return m_window;

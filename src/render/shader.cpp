@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+bool Shader::loadShaderAsset(const char* vertexPath, const char* fragmentPath)
 {
 	// 1.从文件路径中获取顶点/片段着色器
 	std::string vertexCode;
@@ -33,6 +33,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	catch(std::ifstream::failure e)
 	{
 		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		return false;
 	}
 	const char* vShaderCoder = vertexCode.c_str();
 	const char* fShaderCoder = fragmentCode.c_str();
@@ -40,6 +41,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
 	vertexShader = createShaderForType(vShaderCoder, "vertexShader", GL_VERTEX_SHADER);
 	fragmentShader = createShaderForType(fShaderCoder, "fragmentShader", GL_FRAGMENT_SHADER);
 	shaderID = createShaderProgram(2, vertexShader, fragmentShader);
+	return true;
 }
 
 void Shader::chackShaderProgramCreate()
@@ -95,7 +97,37 @@ unsigned int Shader::createShaderProgram(int shaderCount, ...)
 	return shaderProgram;
 }
 
-void Shader::use()
+void Shader::bind() const
 {
 	glUseProgram(shaderID);
+}
+
+void Shader::unbind() const
+{
+	glUseProgram(0);
+}
+
+void Shader::setBool(const std::string &name, bool value) const
+{
+	glUniform1i(glGetUniformLocation(shaderID, name.c_str()), (int)value);
+}
+void Shader::setInt(const std::string &name, int value) const
+{
+	glUniform1i(glGetUniformLocation(shaderID, name.c_str()), value);
+}
+void Shader::setFloat(const std::string &name, float value) const
+{
+	glUniform4f(glGetUniformLocation(shaderID, name.c_str()), 0.0f, value, 0.0f, 1.0f);
+}
+void Shader::setMat2(const std::string &name, const Matrix2 &mat) const
+{
+	glUniformMatrix2fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+void Shader::setMat3(const std::string &name, const Matrix3 &mat) const
+{
+	glUniformMatrix3fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+}
+void Shader::setMat4(const std::string &name, const Matrix4 &mat) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(shaderID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
 }
