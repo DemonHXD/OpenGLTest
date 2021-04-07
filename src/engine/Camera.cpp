@@ -1,43 +1,56 @@
 ﻿#include "camera.h"
 
-void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
+Camera::Camera()
+	: m_movement_speed(2.5f), 
+	m_mouse_sensitivity(0.1f),
+	m_fov(45.0f),
+	m_position(Vector3(0.0f, 0.0f, 3.0f)),
+	m_world_up(Vector3(0.0f, 1.0f, 0.0f)),
+	m_yaw(-90.f),
+	m_pitch(0.0f),
+	m_front(Vector3(0.0f, 0.0f, -1.0f))
 {
-	float velocity = MovementSpeed * deltaTime;
+	updateCameraVectors();
+}
+
+void Camera::ProcessKeyboard(CameraOperator direction, float deltaTime)
+{
+	float velocity = m_movement_speed * deltaTime;
 	switch (direction)
 	{
 	case FORWARD:
-		Position += Front * velocity;
+		m_position += m_front * velocity;
 		break;
 	case BACKWARD:
-		Position -= Front * velocity;
+		m_position -= m_front * velocity;
 		break;
 	case LEFT:
-		Position -= Right * velocity;
+		m_position -= m_right * velocity;
 		break;
 	case RIGHT:
-		Position += Right * velocity;
+		m_position += m_right * velocity;
 		break;
 	}
-	Position.y = 0.0f;
+	m_position.y = 0.0f;
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
 {
-	xoffset *= MouseSensitivity;
-	yoffset *= MouseSensitivity;
+	xoffset *= m_mouse_sensitivity;
+	yoffset *= m_mouse_sensitivity;
 
-	Yaw		+= xoffset;
-	Pitch	+= yoffset;
+	m_yaw += xoffset;
+	m_pitch += yoffset;
 
 	if (constrainPitch)
 	{
-		if (Pitch > 89.0f)
+		if (m_pitch > 89.0f)
 		{
-			Pitch = 89.0f;
+			m_pitch = 89.0f;
 		}
-		else if (Pitch < -89.0f)
+		else if (m_pitch < -89.0f)
 		{
-			Pitch = -89.0f;
+			m_pitch = -89.0f;
 		}
 	}
 	updateCameraVectors();
@@ -45,25 +58,30 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 
 void Camera::ProcessMouseScroll(float yoffset)
 {
-	Zoom -= (float)yoffset;
-	if (Zoom < 1.0f)
+	m_fov -= (float)yoffset;
+	if (m_fov < 1.0f)
 	{
-		Zoom = 1.0f;
+		m_fov = 1.0f;
 	}
-	else if (Zoom > 45.0f)
+	else if (m_fov > 45.0f)
 	{
-		Zoom == 45.0f;
+		m_fov == 45.0f;
 	}
 }
 
 void Camera::updateCameraVectors()
 {
-	Vec3 front;
-	front.x = cos(glm::radians(Yaw) * cos(glm::radians(Pitch)));
-	front.y = sin(glm::radians(Pitch));
-	front.z = sin(glm::radians(Yaw) * cos(glm::radians(Pitch)));
-	Front = glm::normalize(front);
+	Vector3 front;
+	front.x = cos(glm::radians(m_yaw) * cos(glm::radians(m_pitch)));
+	front.y = sin(glm::radians(m_pitch));
+	front.z = sin(glm::radians(m_yaw) * cos(glm::radians(m_pitch)));
+	m_front = glm::normalize(front);
 
-	Right = glm::normalize(glm::cross(Front, WorldUp));
-	Up = glm::normalize(glm::cross(Right, Front));
+	m_right = glm::normalize(glm::cross(m_front, m_world_up));
+	m_up = glm::normalize(glm::cross(m_right, m_front));
+}
+
+Matrix4 Camera::GetViewMatrix() const
+{
+	return glm::lookAt(m_position, m_position + m_front, m_up);
 }

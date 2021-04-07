@@ -4,72 +4,79 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <vector>
+#include "../common/math.h"
 
-enum Camera_Movement
+enum CameraOperator
 {
 	FORWARD,
 	BACKWARD,
 	LEFT,
 	RIGHT
 };
-
-typedef glm::vec3 Vec3;
-typedef glm::mat4 Mat4;
-
-const float YAW				= -90.f;
-const float PITCH			= 0.0f;
-const float SPEED			= 2.5f;
-const float SENSITIVITY		= 0.1f;
-const float ZOOM			= 45.0f;
-
 class Camera
 {
 public:
-	Camera(Vec3 psition = Vec3(0.0f, 0.0f, 3.0f), Vec3 up = Vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
-		:Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-	{
-		Position = psition;
-		WorldUp = up;
-		Yaw = yaw;
-		Pitch = pitch;
-		updateCameraVectors();
-	}
 
-	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch)
-		:Front(Vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
-	{
-		Position = Vec3(posX, posY, posZ);
-		WorldUp = Vec3(upX, upY, upZ);
-		Yaw = yaw;
-		Pitch = pitch;
-		updateCameraVectors();
-	}
+	Camera();
+	~Camera() = default;
 
-	Mat4 GetViewMatrix() const
-	{
-		return glm::lookAt(Position, Position + Front, Up);
-	}
-	void ProcessKeyboard(Camera_Movement direction, float deltaTime);
+	Camera(const Camera&) = delete;
+	Camera(Camera&&) = delete;
+
+	Camera& operator=(const Camera&) = delete;
+	Camera& operator=(Camera&&) = delete;
+
+	Matrix4 GetViewMatrix() const;
+	void ProcessKeyboard(CameraOperator direction, float deltaTime);
 	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch);
 	void ProcessMouseScroll(float yoffset);
 
-public:
+	void setPosition(Vector3 position) { m_position = position; }
+	Vector3 getPosition() const { return m_position; }
+
+	void setFront(Vector3 front) { m_front = front; }
+	Vector3 getFront() const { return m_front; }
+
+	void setUp(Vector3 up) { m_up = up; }
+	Vector3 getUp() const { return m_up; }
+
+	void setRight(Vector3 right) { m_right = right; }
+	Vector3 getRight() const { return m_right; }
+
+	void setWorldUp(Vector3 world_up) { m_world_up = world_up; }
+	Vector3 getWorldUp() const { return m_world_up; }
+
+	void setYaw(float yaw) { m_yaw = yaw; }
+	float getYaw() const { return m_yaw; }
+
+	void setPitch(float pitch) { m_pitch = pitch; }
+	float getPitch() const { return m_pitch; }
+
+	void setSpeed(float movement_speed) { m_movement_speed = movement_speed; }
+	float getSpeed() const { return m_movement_speed; }
+
+	void setSensitivity(float mouse_sensitivity) { m_mouse_sensitivity = mouse_sensitivity; }
+	float getSensitivity() const { return m_mouse_sensitivity; }
+
+	void setFov(float fov) { m_fov = fov; }
+	float getFov() const { return m_fov; }
+
+private:
 	// 摄像机属性
-	Vec3 Position;
-	Vec3 Front;
-	Vec3 Up;
-	Vec3 Right;
-	Vec3 WorldUp;
+	Vector3 m_position;
+	Vector3 m_front;
+	Vector3 m_up;
+	Vector3 m_right;
+	Vector3 m_world_up;
 
 	// 摄像机的角度
-	float Yaw;
-	float Pitch;
+	float m_yaw;
+	float m_pitch;
 
 	// 摄像机的操作属性
-	float MovementSpeed;
-	float MouseSensitivity;
-	float Zoom;
+	float m_movement_speed;
+	float m_mouse_sensitivity;
+	float m_fov;
 
 private:
 	void updateCameraVectors();

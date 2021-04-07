@@ -353,3 +353,4 @@ MigrationBackup/
 .ionide/
 *.vcxproj
 *.filters
+.vscode/

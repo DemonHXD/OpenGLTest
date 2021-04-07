@@ -52,6 +52,11 @@ bool Texture::load(const char* imgPath, bool isGenMipMap)
 	return true;
 }
 
+void Texture::active()
+{
+	glBindTexture(GL_TEXTURE_2D, m_textureID);
+}
+
 /*
 	释放贴图资源
 */

@@ -1,77 +1,20 @@
-﻿
-#define STB_IMAGE_IMPLEMENTATION
-#include <iostream>
-#include "render/shader.h"
-#include "engine/engine.h"
-#include "engine/camera.h"
+﻿#include "engine/engine.h"
+#include "common/math.h"
 #include "render/texture.h"
-#include <GLFW/glfw3.h>
+#include "render/shader.h"
+#include "render/render.h"
+#include "render/render_object.h"
 using namespace std;
-
-Camera camera;
-
-bool firstMouse = true;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0 / 2.0;
-float deltaTime = 0.0f; // 当前帧与上一帧的时间差
-float lastFrame = 0.0f; // 上一帧的时间
-
-
-void processInput(GLFWwindow* window) {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-		glfwSetWindowShouldClose(window, true);
-	}
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	}
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-		camera.ProcessKeyboard(RIGHT, deltaTime);
-	}
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
-{
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
-
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-	lastX = xpos;
-	lastY = ypos;
-
-	camera.ProcessMouseMovement(xoffset, yoffset, true);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	camera.ProcessMouseScroll(yoffset);
-}
 
 int main() {
 
-	Engine* engine = new Engine();
+	std::shared_ptr<Engine> engine = std::make_shared<Engine>();
+	std::shared_ptr<Render> render = std::make_shared<Render>();
 
 	if (!engine->initWindow(800, 600))
 	{
 		return -1;
 	}
-
-	GLFWwindow* windowIns = engine->getWindowIns();
-	glfwSetCursorPosCallback(windowIns, mouse_callback);
-	glfwSetScrollCallback(windowIns, scroll_callback);
-
-	glfwSetInputMode(windowIns, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glEnable(GL_DEPTH_TEST);
 
 	Shader* ourShader = new Shader();
 	if (!ourShader->loadShaderAsset("../asset/vertexShader.vs", "../asset/fragmentShader.fs"))
@@ -123,95 +66,47 @@ int main() {
 		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 	};
 
-	glm::vec3 cubePositions[] = {
-		glm::vec3(0.0f,  0.0f,  0.0f),
-		glm::vec3(2.0f,  5.0f, -15.0f),
-		glm::vec3(-1.5f, -2.2f, -2.5f),
-		glm::vec3(-3.8f, -2.0f, -12.3f),
-		glm::vec3(2.4f, -0.4f, -3.5f),
-		glm::vec3(-1.7f,  3.0f, -7.5f),
-		glm::vec3(1.3f, -2.0f, -2.5f),
-		glm::vec3(1.5f,  2.0f, -2.5f),
-		glm::vec3(1.5f,  0.2f, -1.5f),
-		glm::vec3(-1.3f,  1.0f, -1.5f)
+	Vector3 positions[] = {
+		Vector3(0.0f,  0.0f,  0.0f),
+		Vector3(2.0f,  5.0f, -15.0f),
+		Vector3(-1.5f, -2.2f, -2.5f),
+		Vector3(-3.8f, -2.0f, -12.3f),
+		Vector3(2.4f, -0.4f, -3.5f),
+		Vector3(-1.7f,  3.0f, -7.5f),
+		Vector3(1.3f, -2.0f, -2.5f),
+		Vector3(1.5f,  2.0f, -2.5f),
+		Vector3(1.5f,  0.2f, -1.5f),
+		Vector3(-1.3f,  1.0f, -1.5f)
 	};
-
-	unsigned int VAO, VBO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	// 位置属性
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
 	Texture* texture1 = new Texture();
 	Texture* texture2 = new Texture();
 
-	if (!texture1->load("../asset/container.jpg", true) || !texture2->load("../asset/awesomeface.png", true))
+	if (!texture1->load("../asset/container.jpg", true))
 	{
 		return -1;
 	}
 
-	ourShader->bind();
-	ourShader->setInt("texture1", 0);
-	ourShader->setInt("texture2", 1);
-
-
-		// 渲染循环
-	while (!glfwWindowShouldClose(windowIns)) {
-
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		// 输入
-		processInput(windowIns);
-		//渲染指令……
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// 绑定Texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1->getTextureID());
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2->getTextureID());
-
-		ourShader->bind();
-
-		glBindVertexArray(VAO);
-
-		//定义投影矩阵
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), 800.0f / 600.0f, 0.1f, 100.0f);
-		ourShader->setMat4("projection", projection);
-
-		ourShader->setMat4("view", camera.GetViewMatrix());
-
-		for (unsigned int i = 0; i < 10; i++)
-		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			float timeOrRadians = (i < 1 || i % 3 == 0) ? (float)glfwGetTime() : glm::radians(angle);
-			model = glm::rotate(model, timeOrRadians, glm::vec3(1.0f, 0.3f, 0.5f));
-			ourShader->setMat4("model", model);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		// 检查并调用事件，交换缓冲
-		glfwSwapBuffers(windowIns);
-		glfwPollEvents();
+	if (!texture2->load("../asset/awesomeface.png", true))
+	{
+		return -1;
 	}
-	ourShader->unbind();
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
 
-	glfwTerminate();
+	RenderObject::VertexFormat vf;
+	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
+	vf.push_back({ 2, RenderObject::VertexAttr::ElementType::Float, false });
+
+	for (int i = 0; i < sizeof(positions) / sizeof(positions[0]); ++i)
+	{
+		RenderObject* object = render->add_renderable(vf, vertices, 36, NULL, 0);
+		object->setPosition(positions[i]);
+		object->setTexture(2, texture1, texture2);
+		object->setShader(ourShader);
+		object->setPositionIndex(i);
+	}
+
+	engine->run();
+	engine->deleteRes();
+
 	return 0;
 }

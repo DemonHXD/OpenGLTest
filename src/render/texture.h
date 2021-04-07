@@ -14,6 +14,8 @@ public:
 
 	void unload();
 
+	void active();
+
 	void bindTextureType(unsigned int textureType);
 private:
 	unsigned int m_textureID;

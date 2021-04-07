@@ -137,6 +137,8 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="..\src\engine\engine.cpp" />
     <ClCompile Include="..\src\main.cpp" />
     <ClCompile Include="..\dev\include\glad.c" />
+    <ClCompile Include="..\src\render\render.cpp" />
+    <ClCompile Include="..\src\render\render_object.cpp" />
     <ClCompile Include="..\src\render\shader.cpp" />
     <ClCompile Include="..\src\render\texture.cpp" />
   </ItemGroup>
@@ -145,6 +147,8 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="..\src\common\singleton.h" />
     <ClInclude Include="..\src\engine\camera.h" />
     <ClInclude Include="..\src\engine\engine.h" />
+    <ClInclude Include="..\src\render\render.h" />
+    <ClInclude Include="..\src\render\render_object.h" />
     <ClInclude Include="..\src\render\shader.h" />
     <ClInclude Include="..\src\render\texture.h" />
   </ItemGroup>
