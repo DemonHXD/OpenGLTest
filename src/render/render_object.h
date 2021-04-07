@@ -30,15 +30,12 @@ public:
 
 	void render() const;
 
-	void renderTexture() const;
+	// void renderTexture() const;
 
 	Matrix4 get_model_matrix() const { return glm::translate(glm::mat4(1.0f), m_position); }
 	
 	Shader* getShader() const { return m_shader; }
 	void setShader(Shader* shader) { m_shader = shader; }
-    
-	std::vector<Texture*> getTexture() const { return m_textures; }
-	void setTexture(int textureCount, ...);
 
 	const Vector3& getPosition() const { return m_position; }
 	void setPosition(const Vector3& position) { m_position = position; }
@@ -53,7 +50,6 @@ private:
 	size_t m_index_count;
 
 	Shader* m_shader;
-	std::vector<Texture*> m_textures;
 	Vector3 m_position;
 
 	int m_position_index;

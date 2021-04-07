@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../engine/engine.h"
 #include "../engine/camera.h"
+#include "texture_manager.h"
 #include <string.h>
 
 RenderObject::RenderObject(const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned* indices, size_t index_count)
@@ -79,9 +80,11 @@ void RenderObject::render() const
 {
 	Engine& engine = Engine::get_singleton();
 	Camera* camera = engine.getCamera();
+	TextureManager& textureManager = TextureManager::get_singleton();
+	
 	
 	m_shader->bind();
-	renderTexture();
+	textureManager.renderAllTexture(m_shader);
 	
 	//定义投影矩阵
 	Matrix4 projection = glm::perspective(glm::radians(engine.getCamera()->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -106,30 +109,4 @@ void RenderObject::render() const
 	}
 
 	m_shader->unbind();
-}
-
-void RenderObject::renderTexture() const
-{
-	unsigned int indexs[] = {GL_TEXTURE0, GL_TEXTURE1, GL_TEXTURE2};
-	int index = 0;
-	for (Texture* texture : m_textures)
-	{
-		char str[20];
-		sprintf_s(str, "texture%d", index + 1);
-		m_shader->setInt(str, index);
-		glActiveTexture(indexs[index]);
-		texture->active();
-		index++;
-	}
-}
-
-void RenderObject::setTexture(int textureCount, ...)
-{
-	va_list arg;
-	__crt_va_start(arg, textureCount);
-	for (int i = 0; i < textureCount; i++) {
-		Texture* texture = __crt_va_arg(arg, Texture*);
-		m_textures.push_back(texture);
-	}
-	__crt_va_end(arg);
 }

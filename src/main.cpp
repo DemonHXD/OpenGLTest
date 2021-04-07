@@ -4,12 +4,14 @@
 #include "render/shader.h"
 #include "render/render.h"
 #include "render/render_object.h"
+#include "render/texture_manager.h"
 using namespace std;
 
 int main() {
 
 	std::shared_ptr<Engine> engine = std::make_shared<Engine>();
 	std::shared_ptr<Render> render = std::make_shared<Render>();
+	std::shared_ptr<TextureManager> textureManager = std::make_shared<TextureManager>();
 
 	if (!engine->initWindow(800, 600))
 	{
@@ -79,18 +81,7 @@ int main() {
 		Vector3(-1.3f,  1.0f, -1.5f)
 	};
 
-	Texture* texture1 = new Texture();
-	Texture* texture2 = new Texture();
-
-	if (!texture1->load("../asset/container.jpg", true))
-	{
-		return -1;
-	}
-
-	if (!texture2->load("../asset/awesomeface.png", true))
-	{
-		return -1;
-	}
+	textureManager->addLoadTexture(2, "../asset/container.jpg", "../asset/awesomeface.png");
 
 	RenderObject::VertexFormat vf;
 	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
@@ -100,7 +91,6 @@ int main() {
 	{
 		RenderObject* object = render->add_renderable(vf, vertices, 36, NULL, 0);
 		object->setPosition(positions[i]);
-		object->setTexture(2, texture1, texture2);
 		object->setShader(ourShader);
 		object->setPositionIndex(i);
 	}
