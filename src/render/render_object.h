@@ -2,6 +2,7 @@
 #define _RENDER_OBJECT_H_
 
 #include <vector>
+#include <map>
 #include "../common/math.h"
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -25,26 +26,31 @@ public:
 	};
 	typedef std::vector<VertexAttr> VertexFormat;
 	
-	RenderObject(const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned int* indices, size_t index_count);
+	RenderObject() = default;
 	~RenderObject();
 
+	void setRenderObject(const std::string vaoName, const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned int* indices, size_t index_count);
+	void setRenderObject(const std::string vaoName, size_t vertex_count);
 	void render() const;
 
-	Matrix4 get_model_matrix() const { return glm::translate(glm::mat4(1.0f), m_position); }
+	Matrix4 get_model_matrix(Vector3 position) const { return glm::translate(glm::mat4(1.0f), position); }
 	
-	const Vector3& getPosition() const { return m_position; }
-	void setPosition(const Vector3& position) { m_position = position; }
+	const std::vector<Vector3> getPositions() const { return m_positions; }
+	void setPosition(unsigned int positionCount, Vector3 positions[]);
 
 	void setPositionIndex(const int index) { m_position_index = index; }
 	
 private:
-	unsigned int m_vao;
+	std::map<std::string, unsigned int> m_vaos;
+	// unsigned int m_vao;
 	unsigned int m_vbo;
 	unsigned int m_ebo;
 	size_t m_vertex_count;
 	size_t m_index_count;
 
-	Vector3 m_position;
+	Vector3 m_lightPos = Vector3(1.2f, 1.0f, 2.0f);
+
+	std::vector<Vector3> m_positions;
 	int m_position_index;
 };
 #endif

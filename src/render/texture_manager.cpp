@@ -32,12 +32,19 @@ void TextureManager::renderAllTexture(Shader* shader)
         return;
     }
 
+    auto textureNames = shader->getTextureNames();
+    if (textureNames.empty())
+    {
+        std::cout << "textureNames is empty......" << std::endl;
+        return;
+    }
     int index = 0;
     for (Texture *texture : m_textures)
     {
-        char str[20];
-        sprintf_s(str, "texture%d", index + 1);
-        shader->setInt(str, index);
+        // char str[20];
+        // sprintf_s(str, "texture%d", index + 1);
+        // shader->setInt(str, index);
+        shader->setInt(textureNames[index], index);
         glActiveTexture(GL_TEXTURE0 + index);
         texture->active();
         index++;

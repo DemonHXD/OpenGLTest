@@ -2,6 +2,7 @@
 #define _SHADER_H_
 
 #include <string>
+#include <vector>
 #include "../common/math.h"
 
 class Shader
@@ -23,7 +24,14 @@ public:
 
 	unsigned int getShadeID() const
 	{
-		return shaderID;
+		return m_shaderID;
+	}
+
+	void setTextureNames(unsigned int textureNameCount, ...);
+
+	std::vector<std::string> getTextureNames() const
+	{
+		return m_textureName;
 	}
 
 	void setBool(const std::string &name, bool value) const;
@@ -32,6 +40,8 @@ public:
 	void setMat2(const std::string &name, const Matrix2 &mat) const;
 	void setMat3(const std::string &name, const Matrix3 &mat) const;
 	void setMat4(const std::string &name, const Matrix4 &mat) const;
+	void setVec3(const std::string &name, float x, float y, float z)const;
+	void setVec3(const std::string &name, const glm::vec3 pos) const;
 
 private:
 	// 检查着色器是否创建成功
@@ -41,9 +51,10 @@ private:
 	// 根据类型创建着色器
 	unsigned int createShaderForType(const char* shaderSource, const char* shaderName, int shaderType);
 	// 创建着色器程序
-	unsigned int createShaderProgram(int shaderCount, ...);
+	void createShaderProgram(int shaderCount, ...);
 private:
-	unsigned int shaderID;
+	unsigned int m_shaderID;
+	std::vector<std::string> m_textureName;
 };
 #endif // !_SHADER_H_
 

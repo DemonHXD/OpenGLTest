@@ -84,13 +84,24 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\asset\fragmentShader.fs">
+    <Image Include="..\asset\light\container2.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="..\asset\light\container2_specular.png">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\asset\light\light_fragmentShader.fs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="..\asset\fragmentShader2.fs">
+    <None Include="..\asset\light\light_fragmentShader2.fs">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="..\asset\vertexShader.vs">
+    <None Include="..\asset\light\light_vertexShader.vs">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="..\asset\light\light_vertexShader2.vs">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

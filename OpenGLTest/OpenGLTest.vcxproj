@@ -157,9 +157,14 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="..\src\render\texture_manager.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\asset\fragmentShader.fs" />
-    <None Include="..\asset\fragmentShader2.fs" />
-    <None Include="..\asset\vertexShader.vs" />
+    <Image Include="..\asset\light\container2.png" />
+    <Image Include="..\asset\light\container2_specular.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\asset\light\light_fragmentShader.fs" />
+    <None Include="..\asset\light\light_fragmentShader2.fs" />
+    <None Include="..\asset\light\light_vertexShader.vs" />
+    <None Include="..\asset\light\light_vertexShader2.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

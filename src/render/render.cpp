@@ -1,7 +1,7 @@
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
 #include "render.h"
 
-Render* Singleton<Render>::singleton = nullptr;
+Render *Singleton<Render>::singleton = nullptr;
 
 Render::~Render()
 {
@@ -13,9 +13,11 @@ Render::~Render()
 
 void Render::begin_frame(float delta)
 {
-    //渲染指令……
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//渲染指令……
+	// glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	// glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Render::end_frame(bool swap_buffer)
@@ -26,7 +28,7 @@ void Render::end_frame(bool swap_buffer)
 void Render::draw(float delta)
 {
 	begin_frame(delta);
-	
+
 	for (auto object : _render_objects)
 	{
 		object->render();
@@ -35,9 +37,14 @@ void Render::draw(float delta)
 	end_frame(true);
 }
 
-RenderObject* Render::add_renderable(const RenderObject::VertexFormat& vformat, const void* vertices, size_t vcount, const unsigned int* indices/*=nullptr*/, size_t icount/*=0*/)
+void Render::addRenderObject(RenderObject *object)
 {
-	RenderObject* object = new RenderObject(vformat, vertices, vcount, indices, icount);
 	_render_objects.emplace_back(object);
-	return object;
 }
+
+// RenderObject* Render::add_renderable(const std::string vaoName, const RenderObject::VertexFormat& vformat, const void* vertices, size_t vcount, const unsigned int* indices/*=nullptr*/, size_t icount/*=0*/)
+// {
+// 	RenderObject* object = new RenderObject(vaoName, vformat, vertices, vcount, indices, icount);
+// 	_render_objects.emplace_back(object);
+// 	return object;
+// }

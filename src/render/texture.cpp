@@ -6,12 +6,11 @@
 #include <assert.h>
 
 Texture::Texture()
-	:m_textureID(0),
-	m_width(0),
-	m_height(0),
-	m_textureType(GL_TEXTURE_2D)
+	: m_textureID(0),
+	  m_width(0),
+	  m_height(0),
+	  m_textureType(GL_TEXTURE_2D)
 {
-
 }
 
 /*
@@ -22,7 +21,7 @@ void Texture::bindTextureType(unsigned int textureType)
 	m_textureType = textureType;
 }
 
-bool Texture::load(const char* imgPath, bool isGenMipMap)
+bool Texture::load(const char *imgPath, bool isGenMipMap)
 {
 	int width, height, nrChannels;
 	unsigned char *data = stbi_load(imgPath, &width, &height, &nrChannels, 0);
@@ -35,7 +34,13 @@ bool Texture::load(const char* imgPath, bool isGenMipMap)
 	glGenTextures(1, &m_textureID);
 	glBindTexture(m_textureType, m_textureID);
 	assert(nrChannels == 3 || nrChannels == 4);
-	const unsigned int format = nrChannels == 4 ? GL_RGBA : GL_RGB;
+	unsigned int format;
+	if (nrChannels == 1)
+		format = GL_RED;
+	else if (nrChannels == 3)
+		format = GL_RGB;
+	else if (nrChannels == 4)
+		format = GL_RGBA;
 	glTexImage2D(m_textureType, 0, GL_RGB, width, width, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(m_textureType);
 	stbi_image_free(data);
@@ -44,7 +49,7 @@ bool Texture::load(const char* imgPath, bool isGenMipMap)
 	{
 		glTexParameteri(m_textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(m_textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(m_textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	m_width = width;
@@ -64,7 +69,7 @@ void Texture::unload()
 {
 	if (!m_textureID)
 	{
-		return ;
+		return;
 	}
 	glDeleteTextures(1, &m_textureID);
 	m_textureID = 0;

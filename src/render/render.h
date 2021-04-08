@@ -1,10 +1,12 @@
-#ifndef _RENDER_H_
+﻿#ifndef _RENDER_H_
 #define _RENDER_H_
 
 #include "render_object.h"
 #include "../common/singleton.h"
 #include <vector>
+#include <string>
 
+class RenderObject;
 class Render : public Singleton<Render>
 {
 public:
@@ -18,7 +20,7 @@ public:
 
 	void draw(float delta);
 	
-	RenderObject* add_renderable(const RenderObject::VertexFormat& vformat, const void* vertices, size_t vcount, const unsigned int* indices = nullptr, size_t icount = 0);
+	void addRenderObject(RenderObject* object);
 
 protected:
 	void begin_frame(float delta);
