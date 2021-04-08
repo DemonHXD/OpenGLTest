@@ -30,13 +30,8 @@ public:
 
 	void render() const;
 
-	// void renderTexture() const;
-
 	Matrix4 get_model_matrix() const { return glm::translate(glm::mat4(1.0f), m_position); }
 	
-	Shader* getShader() const { return m_shader; }
-	void setShader(Shader* shader) { m_shader = shader; }
-
 	const Vector3& getPosition() const { return m_position; }
 	void setPosition(const Vector3& position) { m_position = position; }
 
@@ -49,9 +44,7 @@ private:
 	size_t m_vertex_count;
 	size_t m_index_count;
 
-	Shader* m_shader;
 	Vector3 m_position;
-
 	int m_position_index;
 };
 #endif

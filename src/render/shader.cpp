@@ -3,9 +3,13 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "../engine/engine.h"
 
-bool Shader::loadShaderAsset(const char* vertexPath, const char* fragmentPath)
+bool Shader::loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName)
 {
+	Engine& engine = Engine::get_singleton();
+	const char* vertexPath = engine.getAssetPathByName(vertexAssetName);
+	const char* fragmentPath = engine.getAssetPathByName(fragmentAssetName);
 	// 1.从文件路径中获取顶点/片段着色器
 	std::string vertexCode;
 	std::string fragmentCode;

@@ -4,18 +4,21 @@
 #include "shader.h"
 #include <assert.h>
 #include <iostream>
+#include <string>
+#include "../engine/engine.h"
 
 TextureManager *Singleton<TextureManager>::singleton = nullptr;
 
 void TextureManager::addLoadTexture(unsigned int loadTextureCount, ...)
 {
+    Engine& engine = Engine::get_singleton();
     va_list arg;
     __crt_va_start(arg, loadTextureCount);
     for (int i = 0; i < loadTextureCount; i++)
     {
-        const char *texturePath = __crt_va_arg(arg, char *);
+        const char * texturePath = __crt_va_arg(arg, char *);
         Texture *texture = new Texture();
-        assert(texture->load(texturePath, true));
+        assert(texture->load(engine.getAssetPathByName(texturePath), true));
         m_textures.push_back(texture);
     }
     __crt_va_end(arg);

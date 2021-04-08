@@ -7,6 +7,7 @@
 #include "../engine/engine.h"
 #include "../engine/camera.h"
 #include "texture_manager.h"
+#include "shader_manager.h"
 #include <string.h>
 
 RenderObject::RenderObject(const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned* indices, size_t index_count)
@@ -81,22 +82,24 @@ void RenderObject::render() const
 	Engine& engine = Engine::get_singleton();
 	Camera* camera = engine.getCamera();
 	TextureManager& textureManager = TextureManager::get_singleton();
+	ShaderManager& shaderManager = ShaderManager::get_singleton();
 	
+	Shader* outShader = shaderManager.getShaders().at("ourShader");
 	
-	m_shader->bind();
-	textureManager.renderAllTexture(m_shader);
+	outShader->bind();
+	textureManager.renderAllTexture(outShader);
 	
 	//定义投影矩阵
 	Matrix4 projection = glm::perspective(glm::radians(engine.getCamera()->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
-	m_shader->setMat4("projection", projection);
-	m_shader->setMat4("view", engine.getCamera()->GetViewMatrix());
+	outShader->setMat4("projection", projection);
+	outShader->setMat4("view", engine.getCamera()->GetViewMatrix());
 
 	Matrix4 model = Matrix4(1.0f);
 	model = glm::translate(model, m_position);
 	float angle = 20.0f * m_position_index;
 	float timeOrRadians = (m_position_index < 1 || m_position_index % 3 == 0) ? engine.get_time() : glm::radians(angle);
 	model = glm::rotate(model, timeOrRadians, Vector3(1.0f, 0.3f, 0.5f));
-	m_shader->setMat4("model", model);
+	outShader->setMat4("model", model);
 	
 	glBindVertexArray(m_vao);
 	if (m_index_count > 0)
@@ -108,5 +111,5 @@ void RenderObject::render() const
 		glDrawArrays(GL_TRIANGLES, 0, m_vertex_count);
 	}
 
-	m_shader->unbind();
+	outShader->unbind();
 }

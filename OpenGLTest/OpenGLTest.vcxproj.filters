@@ -47,6 +47,9 @@
     <ClCompile Include="..\src\render\texture_manager.cpp">
       <Filter>源文件\render</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\render\shader_manager.cpp">
+      <Filter>源文件\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\common\math.h">
@@ -74,6 +77,9 @@
       <Filter>源文件\render</Filter>
     </ClInclude>
     <ClInclude Include="..\src\render\texture_manager.h">
+      <Filter>源文件\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\render\shader_manager.h">
       <Filter>源文件\render</Filter>
     </ClInclude>
   </ItemGroup>

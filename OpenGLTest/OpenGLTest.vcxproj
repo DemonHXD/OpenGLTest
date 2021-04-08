@@ -140,6 +140,7 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="..\src\render\render.cpp" />
     <ClCompile Include="..\src\render\render_object.cpp" />
     <ClCompile Include="..\src\render\shader.cpp" />
+    <ClCompile Include="..\src\render\shader_manager.cpp" />
     <ClCompile Include="..\src\render\texture.cpp" />
     <ClCompile Include="..\src\render\texture_manager.cpp" />
   </ItemGroup>
@@ -151,6 +152,7 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="..\src\render\render.h" />
     <ClInclude Include="..\src\render\render_object.h" />
     <ClInclude Include="..\src\render\shader.h" />
+    <ClInclude Include="..\src\render\shader_manager.h" />
     <ClInclude Include="..\src\render\texture.h" />
     <ClInclude Include="..\src\render\texture_manager.h" />
   </ItemGroup>

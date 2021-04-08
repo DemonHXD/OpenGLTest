@@ -5,6 +5,8 @@
 #include "render/render.h"
 #include "render/render_object.h"
 #include "render/texture_manager.h"
+#include "render/shader_manager.h"
+#include <map>
 using namespace std;
 
 int main() {
@@ -12,6 +14,7 @@ int main() {
 	std::shared_ptr<Engine> engine = std::make_shared<Engine>();
 	std::shared_ptr<Render> render = std::make_shared<Render>();
 	std::shared_ptr<TextureManager> textureManager = std::make_shared<TextureManager>();
+	std::shared_ptr<ShaderManager> shaderManager = std::make_shared<ShaderManager>();
 
 	if (!engine->initWindow(800, 600))
 	{
@@ -19,10 +22,13 @@ int main() {
 	}
 
 	Shader* ourShader = new Shader();
-	if (!ourShader->loadShaderAsset("../asset/vertexShader.vs", "../asset/fragmentShader.fs"))
+	if (!ourShader->loadShaderAsset("vertexShader.vs", "fragmentShader.fs"))
 	{
 		return -1;
 	}
+	std::map<std::string, Shader*> shaderMap;
+	shaderMap.insert(std::pair<std::string, Shader*>("ourShader", ourShader));
+	shaderManager->addLoadShader(shaderMap);
 
 	float vertices[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
@@ -81,7 +87,7 @@ int main() {
 		Vector3(-1.3f,  1.0f, -1.5f)
 	};
 
-	textureManager->addLoadTexture(2, "../asset/container.jpg", "../asset/awesomeface.png");
+	 textureManager->addLoadTexture(2, "container.jpg", "awesomeface.png");
 
 	RenderObject::VertexFormat vf;
 	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
@@ -91,7 +97,6 @@ int main() {
 	{
 		RenderObject* object = render->add_renderable(vf, vertices, 36, NULL, 0);
 		object->setPosition(positions[i]);
-		object->setShader(ourShader);
 		object->setPositionIndex(i);
 	}
 

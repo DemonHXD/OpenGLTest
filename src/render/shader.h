@@ -17,7 +17,7 @@ public:
 	Shader& operator=(const Shader&) = delete;
 	Shader& operator=(Shader&&) = delete;
 
-	bool loadShaderAsset(const char* vertexPath, const char* fragmentPath);
+	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
 	void bind() const;
 	void unbind() const;
 
