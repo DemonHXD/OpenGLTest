@@ -112,15 +112,19 @@ void RenderObject::render() const
 	Shader *lightCubeShader = shaderManager.getShaders().at("lightCubeShader");
 
 	unsigned int cubeVAO = m_vaos.at("cubeVAO");
-	unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
+	// unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
 
 	lightingShader->bind();
 	// 设置光照属性
-	lightingShader->setVec3("light.position", m_lightPos);
+	// lightingShader->setVec3("light.position", m_lightPos);
+	lightingShader->setVec3("light.position",  camera->getPosition());
+	lightingShader->setVec3("light.direction", camera->getFront());
+	lightingShader->setFloat("light.cutOff",   glm::cos(glm::radians(12.5f)));
+	lightingShader->setFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 	lightingShader->setVec3("viewPos", camera->getPosition());
 
-	lightingShader->setVec3("light.ambient", 0.2f, 0.2f, 0.2f);
-	lightingShader->setVec3("light.diffuse", 0.5f, 0.5f, 0.5f);
+	lightingShader->setVec3("light.ambient", 0.1f, 0.1f, 0.1f);
+	lightingShader->setVec3("light.diffuse", 0.8f, 0.8f, 0.8f);
 	lightingShader->setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 	lightingShader->setFloat("light.constant", 1.0f);
 	lightingShader->setFloat("light.linear", 0.09f);
@@ -153,16 +157,16 @@ void RenderObject::render() const
 	}
 
 	// 设置投光物shader及模型
-	lightCubeShader->bind();
-	lightCubeShader->setMat4("projection", projection);
-	lightCubeShader->setMat4("view", view);
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, m_lightPos);
-	model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
-	lightCubeShader->setMat4("model", model);
+	// lightCubeShader->bind();
+	// lightCubeShader->setMat4("projection", projection);
+	// lightCubeShader->setMat4("view", view);
+	// model = glm::mat4(1.0f);
+	// model = glm::translate(model, m_lightPos);
+	// model = glm::scale(model, glm::vec3(0.2f)); // a smaller cube
+	// lightCubeShader->setMat4("model", model);
 
-	glBindVertexArray(lightCubeVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 36);
+	// glBindVertexArray(lightCubeVAO);
+	// glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	lightingShader->unbind();
 	lightCubeShader->unbind();
