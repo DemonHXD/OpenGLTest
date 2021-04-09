@@ -150,7 +150,7 @@ void Engine::run()
 	}
 }
 
-void Engine::deleteRes()
+void Engine::stopRun()
 {
 	// 渲染循环结束后我们需要正确释放/删除之前分配的资源
 	glfwTerminate();

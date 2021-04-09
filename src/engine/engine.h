@@ -34,7 +34,7 @@ public:
 
 	bool initWindow(unsigned int width, unsigned int height);
 	void run();
-	void deleteRes();
+	void stopRun();
 
 	float get_time() const;
 	

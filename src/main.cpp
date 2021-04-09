@@ -112,7 +112,7 @@ int main() {
 	render->addRenderObject(object);
 
 	engine->run();
-	engine->deleteRes();
+	engine->stopRun();
 
 	return 0;
 }
