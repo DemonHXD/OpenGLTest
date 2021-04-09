@@ -26,6 +26,7 @@ int main() {
 	{
 		return -1;
 	}
+	lightingShader->setTextureNames(2, "material.diffuse", "material.specular");
 	
 	Shader* lightCubeShader = new Shader();
 	if (!lightCubeShader->loadShaderAsset("light_vertexShader2.vs", "light_fragmentShader2.fs"))
@@ -33,7 +34,6 @@ int main() {
 		return -1;
 	}
 	lightCubeShader->bind();
-	lightCubeShader->setTextureNames(2, "material.diffuse", "material.specular");
 	std::map<std::string, Shader*> shaderMap;
 	shaderMap.insert(std::pair<std::string, Shader*>("lightingShader", lightingShader));
 	shaderMap.insert(std::pair<std::string, Shader*>("lightCubeShader", lightCubeShader));
