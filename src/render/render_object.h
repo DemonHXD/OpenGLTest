@@ -38,6 +38,9 @@ public:
 	const std::vector<Vector3> getPositions() const { return m_positions; }
 	void setPosition(unsigned int positionCount, Vector3 positions[]);
 
+	const std::vector<Vector3> getPointLightPositions() const { return m_point_light_positions; }
+	void setPointLightPositions(unsigned int positionCount, Vector3 pointLightPositions[]);
+
 	void setPositionIndex(const int index) { m_position_index = index; }
 	
 private:
@@ -51,6 +54,7 @@ private:
 	Vector3 m_lightPos = Vector3(1.2f, 1.0f, 2.0f);
 
 	std::vector<Vector3> m_positions;
+	std::vector<Vector3> m_point_light_positions;
 	int m_position_index;
 };
 #endif

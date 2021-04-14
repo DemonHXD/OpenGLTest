@@ -99,6 +99,13 @@ int main() {
 		Vector3(-1.3f,  1.0f, -1.5f)
 	};
 
+	Vector3 pointLightPositions[] = {
+		Vector3( 0.7f,  0.2f,  2.0f),
+		Vector3( 2.3f, -3.3f, -4.0f),
+		Vector3(-4.0f,  2.0f, -12.0f),
+		Vector3( 0.0f,  0.0f, -3.0f)
+	};
+
 	RenderObject::VertexFormat vf;
 	RenderObject::VertexFormat emptyVs;
 	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
@@ -109,6 +116,7 @@ int main() {
 	object->setRenderObject("cubeVAO", vf, vertices, 36, NULL, 0);
 	object->setRenderObject("lightCubeVAO", 8);
 	object->setPosition(10, positions);
+	object->setPointLightPositions(4, pointLightPositions);
 	render->addRenderObject(object);
 
 	engine->run();
