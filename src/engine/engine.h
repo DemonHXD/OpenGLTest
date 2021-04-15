@@ -49,6 +49,7 @@ public:
 	}
 
 	std::string getEnginePath() const;
+	std::vector<std::string> getFilesBySuffix(std::string suffixName);
 
 	const char* getAssetPathByName(std::string assetName) const
 	{
@@ -58,7 +59,7 @@ public:
 private:
 	void initEngine();
 	void preLoadAllAsset();
-	void getFiles(std::string& path, std::vector<std::string>& files);
+	void getFiles(std::string path, std::vector<std::string>& files);
 	void keyProcessInput(float deltaTime);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);

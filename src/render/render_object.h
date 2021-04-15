@@ -5,10 +5,10 @@
 #include <map>
 #include "../common/math.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include "../common/json_load.h"
 
 class Texture;
 class Shader;
-
 class RenderObject
 {
 
@@ -26,7 +26,7 @@ public:
 	};
 	typedef std::vector<VertexAttr> VertexFormat;
 	
-	RenderObject() = default;
+	RenderObject();
 	~RenderObject();
 
 	void setRenderObject(const std::string vaoName, const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned int* indices, size_t index_count);
@@ -56,5 +56,9 @@ private:
 	std::vector<Vector3> m_positions;
 	std::vector<Vector3> m_point_light_positions;
 	int m_position_index;
+
+	JsonLoad::DirLightData m_dirLight_data;
+	JsonLoad::PointLightsData m_pointLights_data;
+	JsonLoad::PointLightsData m_spotLightData_data;
 };
 #endif

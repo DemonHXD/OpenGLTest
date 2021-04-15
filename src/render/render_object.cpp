@@ -8,7 +8,15 @@
 #include "../engine/camera.h"
 #include "texture_manager.h"
 #include "shader_manager.h"
+#include "../common/lib_utils.h"
 #include <string.h>
+
+RenderObject::RenderObject()
+{
+	m_dirLight_data = JsonLoad::getInstance()->getDirLightData();
+	m_pointLights_data = JsonLoad::getInstance()->getPointLightsData();
+	m_spotLightData_data = JsonLoad::getInstance()->getSpotLightData();
+}
 
 void RenderObject::setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned *indices, size_t index_count)
 {
@@ -127,92 +135,67 @@ void RenderObject::render() const
 	lightingShader->setVec3("viewPos", camera->getPosition());
 	lightingShader->setFloat("material.shininess", 32.0f);
 	// directional light
-	lightingShader->setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-	lightingShader->setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
-	lightingShader->setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
-	lightingShader->setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-	// point light 1
-	lightingShader->setVec3("pointLights[0].position", m_point_light_positions[0]);
-	lightingShader->setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-	lightingShader->setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-	lightingShader->setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-	lightingShader->setFloat("pointLights[0].constant", 1.0f);
-	lightingShader->setFloat("pointLights[0].linear", 0.09);
-	lightingShader->setFloat("pointLights[0].quadratic", 0.032);
-	// point light 2
-	lightingShader->setVec3("pointLights[1].position", m_point_light_positions[1]);
-	lightingShader->setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-	lightingShader->setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-	lightingShader->setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-	lightingShader->setFloat("pointLights[1].constant", 1.0f);
-	lightingShader->setFloat("pointLights[1].linear", 0.09);
-	lightingShader->setFloat("pointLights[1].quadratic", 0.032);
-	// point light 3
-	lightingShader->setVec3("pointLights[2].position", m_point_light_positions[2]);
-	lightingShader->setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-	lightingShader->setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-	lightingShader->setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-	lightingShader->setFloat("pointLights[2].constant", 1.0f);
-	lightingShader->setFloat("pointLights[2].linear", 0.09);
-	lightingShader->setFloat("pointLights[2].quadratic", 0.032);
-	// point light 4
-	lightingShader->setVec3("pointLights[3].position", m_point_light_positions[3]);
-	lightingShader->setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-	lightingShader->setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-	lightingShader->setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-	lightingShader->setFloat("pointLights[3].constant", 1.0f);
-	lightingShader->setFloat("pointLights[3].linear", 0.09);
-	lightingShader->setFloat("pointLights[3].quadratic", 0.032);
+	lightingShader->setVec3("dirLight.direction", m_dirLight_data.direction);
+	lightingShader->setVec3("dirLight.ambient", m_dirLight_data.ambient);
+	lightingShader->setVec3("dirLight.diffuse", m_dirLight_data.diffuse);
+	lightingShader->setVec3("dirLight.specular", m_dirLight_data.specular);
+
+	for (unsigned int i = 0; i < m_point_light_positions.size(); i++)
+	{
+		std::string argsName = LibUtils::getInstance()->formatString("pointLights[%d]", i);
+		lightingShader->setVec3(argsName + ".position", m_point_light_positions[i]);
+		lightingShader->setVec3(argsName + ".ambient", m_pointLights_data.ambient);
+		lightingShader->setVec3(argsName + ".diffuse", m_pointLights_data.diffuse);
+		lightingShader->setVec3(argsName + ".specular", m_pointLights_data.specular);
+		lightingShader->setFloat(argsName + ".constant", m_pointLights_data.constant);
+		lightingShader->setFloat(argsName + ".linear", m_pointLights_data.linear);
+		lightingShader->setFloat(argsName + ".quadratic", m_pointLights_data.quadratic);
+	}
+
 	// spotLight
 	lightingShader->setVec3("spotLight.position", camera->getPosition());
 	lightingShader->setVec3("spotLight.direction", camera->getFront());
-	lightingShader->setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-	lightingShader->setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-	lightingShader->setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-	lightingShader->setFloat("spotLight.constant", 1.0f);
-	lightingShader->setFloat("spotLight.linear", 0.09);
-	lightingShader->setFloat("spotLight.quadratic", 0.032);
+	lightingShader->setVec3("spotLight.ambient", m_spotLightData_data.ambient);
+	lightingShader->setVec3("spotLight.diffuse", m_spotLightData_data.diffuse);
+	lightingShader->setVec3("spotLight.specular", m_spotLightData_data.specular);
+	lightingShader->setFloat("spotLight.constant", m_spotLightData_data.constant);
+	lightingShader->setFloat("spotLight.linear", m_spotLightData_data.linear);
+	lightingShader->setFloat("spotLight.quadratic", m_spotLightData_data.quadratic);
 	lightingShader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
 	lightingShader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
-	// view/projection transformations
 	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
 	Matrix4 view = camera->GetViewMatrix();
 	lightingShader->setMat4("projection", projection);
 	lightingShader->setMat4("view", view);
-
-	// world transformation
 	Matrix4 model = Matrix4(1.0f);
 	lightingShader->setMat4("model", model);
 
+	// 为lightingShader渲染所有纹理
 	textureManager.renderAllTexture(lightingShader);
 
-	// render containers
+	// 渲染十个箱子
 	glBindVertexArray(cubeVAO);
 	for (unsigned int i = 0; i < 10; i++)
 	{
-		// calculate the model matrix for each object and pass it to shader before drawing
 		Matrix4 model = Matrix4(1.0f);
 		model = glm::translate(model, m_positions[i]);
 		float angle = 20.0f * i;
 		model = glm::rotate(model, glm::radians(angle), Vector3(1.0f, 0.3f, 0.5f));
 		lightingShader->setMat4("model", model);
-
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
 
-	// also draw the lamp object(s)
 	lightCubeShader->bind();
 	lightCubeShader->setMat4("projection", projection);
 	lightCubeShader->setMat4("view", view);
-
-	// we now draw as many light bulbs as we have point lights.
+	// 渲染四个发光体
 	glBindVertexArray(lightCubeVAO);
 	for (unsigned int i = 0; i < 4; i++)
 	{
 		model = Matrix4(1.0f);
 		model = glm::translate(model, m_point_light_positions[i]);
-		model = glm::scale(model, Vector3(0.2f)); // Make it a smaller cube
+		model = glm::scale(model, Vector3(0.2f));
 		lightCubeShader->setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}

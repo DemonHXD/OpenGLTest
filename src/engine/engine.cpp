@@ -6,6 +6,7 @@
 #include "camera.h"
 #include "../common/math.h"
 #include "../render/render.h"
+#include "../common/json_load.h"
 #include <assert.h>
 #include <io.h> 
 
@@ -23,9 +24,10 @@ void Engine::initEngine()
 {
 	m_camera = new Camera();
 	preLoadAllAsset();
+	JsonLoad::getInstance()->initJson(getFilesBySuffix(".json"));
 }
 
-void Engine::getFiles(std::string& path, std::vector<std::string>& files)
+void Engine::getFiles(std::string path, std::vector<std::string>& files)
 {
     //文件句柄
     long   hFile   =   0;
@@ -90,6 +92,32 @@ std::string Engine::getEnginePath() const
 		buffer[index] = '\0';
 	}
 	return buffer;
+}
+
+/*
+    通过后缀名获取所有资源
+*/
+std::vector<std::string> Engine::getFilesBySuffix(std::string suffixName)
+{
+    std::vector<std::string> files;
+
+	std::string assetPath = getEnginePath() + std::string("asset");
+    //获取该路径下的所有文件
+    getFiles(assetPath, files);
+    auto iter = files.begin();
+    while(iter != files.end())
+    {
+        std::string assetPath = *iter;
+        int result = assetPath.find(suffixName);
+        if (result == -1)
+        {
+            iter = files.erase(iter);
+        }
+        else{
+            iter++;
+        }
+    }
+    return files;
 }
 
 bool Engine::initWindow(unsigned int width, unsigned int height)

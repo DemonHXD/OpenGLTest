@@ -133,6 +133,8 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\common\json_load.cpp" />
+    <ClCompile Include="..\src\common\lib_utils.cpp" />
     <ClCompile Include="..\src\engine\camera.cpp" />
     <ClCompile Include="..\src\engine\engine.cpp" />
     <ClCompile Include="..\src\main.cpp" />
@@ -145,6 +147,8 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="..\src\render\texture_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\common\json_load.h" />
+    <ClInclude Include="..\src\common\lib_utils.h" />
     <ClInclude Include="..\src\common\math.h" />
     <ClInclude Include="..\src\common\singleton.h" />
     <ClInclude Include="..\src\engine\camera.h" />

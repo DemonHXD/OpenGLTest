@@ -50,6 +50,12 @@
     <ClCompile Include="..\src\render\shader_manager.cpp">
       <Filter>源文件\render</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\common\lib_utils.cpp">
+      <Filter>源文件\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\common\json_load.cpp">
+      <Filter>源文件\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\common\math.h">
@@ -81,6 +87,12 @@
     </ClInclude>
     <ClInclude Include="..\src\render\shader_manager.h">
       <Filter>源文件\render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\lib_utils.h">
+      <Filter>源文件\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\common\json_load.h">
+      <Filter>源文件\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
