@@ -88,6 +88,7 @@
       <AdditionalDependencies>glew32.lib
 ;glfw3.lib
 ;soil2-debug.lib;
+assimpd.lib;
 opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
