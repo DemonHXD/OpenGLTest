@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include "camera.h"
+#include <stb_image.h>
 #include "../common/math.h"
 #include "../render/render.h"
 #include "../common/json_load.h"
@@ -136,6 +137,11 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 		glfwTerminate();
 		return false;
 	}
+
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
 	// 将窗口设置为当前的线程的上下文
 	glfwMakeContextCurrent(m_window);
 
@@ -154,6 +160,7 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 	glfwSetScrollCallback(m_window, mouse_scroll_callback);
 
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	stbi_set_flip_vertically_on_load(false);
 	glEnable(GL_DEPTH_TEST);
 
 	return true;

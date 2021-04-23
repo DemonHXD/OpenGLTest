@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include "texture_manager.h"
 #include "../engine/engine.h"
 
 bool Shader::loadShaderAsset(const char *vertexAssetName, const char *fragmentAssetName)
@@ -125,6 +126,12 @@ void Shader::setTextureNames(unsigned int textureNameCount, ...)
 		m_textureName.push_back(std::string(textureName));
 	}
 	__crt_va_end(arg);
+}
+
+void Shader::renderTextures(std::vector<std::string> texturesName)
+{
+	TextureManager &textureManager = TextureManager::get_singleton();
+	textureManager.renderTexturesByShaderId(m_shaderID, texturesName);
 }
 
 void Shader::setBool(const std::string &name, bool value) const

@@ -6,15 +6,19 @@
 #include "render/render_object.h"
 #include "render/texture_manager.h"
 #include "render/shader_manager.h"
+#include "render/model_manager.h"
+#include "render/model.h"
 #include <map>
 using namespace std;
 
-int main() {
+int main()
+{
 
 	std::shared_ptr<Engine> engine = std::make_shared<Engine>();
 	std::shared_ptr<Render> render = std::make_shared<Render>();
 	std::shared_ptr<TextureManager> textureManager = std::make_shared<TextureManager>();
 	std::shared_ptr<ShaderManager> shaderManager = std::make_shared<ShaderManager>();
+	std::shared_ptr<ModelManager> mondelManager = std::make_shared<ModelManager>();
 
 	if (!engine->initWindow(800, 600))
 	{
@@ -27,6 +31,7 @@ int main() {
 		return -1;
 	}
 	lightingShader->setTextureNames(2, "material.diffuse", "material.specular");
+	textureManager->addLoadTexture(lightingShader, 2, "container2.png", "container2_specular.png");
 	
 	Shader* lightCubeShader = new Shader();
 	if (!lightCubeShader->loadShaderAsset("light_vertexShader2.vs", "light_fragmentShader2.fs"))
@@ -34,12 +39,35 @@ int main() {
 		return -1;
 	}
 	lightCubeShader->bind();
+
+	Shader *ourShader = new Shader();
+	if (!ourShader->loadShaderAsset("model_loading.vs", "model_loading.fs"))
+	{
+		return -1;
+	}
+	ourShader->bind();
+
 	std::map<std::string, Shader*> shaderMap;
 	shaderMap.insert(std::pair<std::string, Shader*>("lightingShader", lightingShader));
 	shaderMap.insert(std::pair<std::string, Shader*>("lightCubeShader", lightCubeShader));
+	shaderMap.insert(std::pair<std::string, Shader *>("ourShader", ourShader));
 	shaderManager->addLoadShader(shaderMap);
 
-	textureManager->addLoadTexture(2, "container2.png", "container2_specular.png");
+	Model *ourModel = new Model();
+	if (!ourModel->loadModelAsset("nanosuit.obj"))
+	{
+		return -1;
+	}
+	// 添加渲染贴图数据
+	textureManager->addLoadTexture(ourShader, ourModel->getModelTextures());
+
+	std::map<std::string, Model *> modelMap;
+	modelMap.insert(std::pair<std::string, Model *>("ourModel", ourModel));
+	mondelManager->addLoadModel(modelMap);
+
+	RenderObject *object = new RenderObject();
+	// 渲染模型
+	object->setRenderObject("modelVAO", ourModel->getModelVertex(), ourModel->getModelIndices());
 	
 	float vertices[] = {
 		// positions            // normals     // texture coords
@@ -107,12 +135,10 @@ int main() {
 	};
 
 	RenderObject::VertexFormat vf;
-	RenderObject::VertexFormat emptyVs;
 	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
 	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
 	vf.push_back({ 2, RenderObject::VertexAttr::ElementType::Float, false });
 
-	RenderObject* object = new RenderObject();
 	object->setRenderObject("cubeVAO", vf, vertices, 36, NULL, 0);
 	object->setRenderObject("lightCubeVAO", 8);
 	object->setPosition(10, positions);

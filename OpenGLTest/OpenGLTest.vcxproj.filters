@@ -56,6 +56,12 @@
     <ClCompile Include="..\src\common\json_load.cpp">
       <Filter>源文件\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\render\model.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\render\model_manager.cpp">
+      <Filter>源文件\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\common\math.h">
@@ -93,6 +99,10 @@
     </ClInclude>
     <ClInclude Include="..\src\common\json_load.h">
       <Filter>源文件\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\render\model.h" />
+    <ClInclude Include="..\src\render\model_manager.h">
+      <Filter>源文件\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

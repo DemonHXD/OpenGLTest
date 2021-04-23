@@ -6,10 +6,10 @@
 #include <assert.h>
 
 Texture::Texture()
-	: m_textureID(0),
+	: m_id(0),
 	  m_width(0),
 	  m_height(0),
-	  m_textureType(GL_TEXTURE_2D)
+	  m_type(GL_TEXTURE_2D)
 {
 }
 
@@ -18,7 +18,7 @@ Texture::Texture()
 */
 void Texture::bindTextureType(unsigned int textureType)
 {
-	m_textureType = textureType;
+	m_type = textureType;
 }
 
 bool Texture::load(const char *imgPath, bool isGenMipMap)
@@ -31,8 +31,8 @@ bool Texture::load(const char *imgPath, bool isGenMipMap)
 		return false;
 	}
 
-	glGenTextures(1, &m_textureID);
-	glBindTexture(m_textureType, m_textureID);
+	glGenTextures(1, &m_id);
+	glBindTexture(m_type, m_id);
 	assert(nrChannels == 3 || nrChannels == 4);
 	unsigned int format;
 	if (nrChannels == 1)
@@ -41,16 +41,16 @@ bool Texture::load(const char *imgPath, bool isGenMipMap)
 		format = GL_RGB;
 	else if (nrChannels == 4)
 		format = GL_RGBA;
-	glTexImage2D(m_textureType, 0, GL_RGB, width, width, 0, format, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(m_textureType);
+	glTexImage2D(m_type, 0, GL_RGB, width, width, 0, format, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(m_type);
 	stbi_image_free(data);
 
 	if (isGenMipMap)
 	{
-		glTexParameteri(m_textureType, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(m_textureType, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(m_textureType, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(m_textureType, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(m_type, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(m_type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	m_width = width;
 	m_height = height;
@@ -59,7 +59,7 @@ bool Texture::load(const char *imgPath, bool isGenMipMap)
 
 void Texture::active()
 {
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
+	glBindTexture(GL_TEXTURE_2D, m_id);
 }
 
 /*
@@ -67,10 +67,10 @@ void Texture::active()
 */
 void Texture::unload()
 {
-	if (!m_textureID)
+	if (!m_id)
 	{
 		return;
 	}
-	glDeleteTextures(1, &m_textureID);
-	m_textureID = 0;
+	glDeleteTextures(1, &m_id);
+	m_id = 0;
 }

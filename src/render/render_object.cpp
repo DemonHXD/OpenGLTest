@@ -3,11 +3,14 @@
 #include <cassert>
 #include "texture.h"
 #include "shader.h"
+#include "model.h"
 #include <iostream>
 #include "../engine/engine.h"
 #include "../engine/camera.h"
 #include "texture_manager.h"
 #include "shader_manager.h"
+#include "model_manager.h"
+#include "model.h"
 #include "../common/lib_utils.h"
 #include <string.h>
 
@@ -18,7 +21,7 @@ RenderObject::RenderObject()
 	m_spotLightData_data = JsonLoad::getInstance()->getSpotLightData();
 }
 
-void RenderObject::setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned *indices, size_t index_count)
+void RenderObject::setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count)
 {
 	unsigned int vao;
 	std::vector<unsigned> offsets;
@@ -87,6 +90,42 @@ void RenderObject::setRenderObject(const std::string vaoName, size_t vertex_coun
 	m_vaos.insert(std::pair<std::string, unsigned int>(vaoName, vao));
 }
 
+void RenderObject::setRenderObject(const std::string vaoName, const std::vector<ModelVertex> modelVertex, std::vector<unsigned int> modelIndices)
+{
+	unsigned int vao, vbo, ebo;
+	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
+	glGenBuffers(1, &ebo);
+
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glBufferData(GL_ARRAY_BUFFER, modelVertex.size() * sizeof(ModelVertex), &modelVertex[0], GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, modelIndices.size() * sizeof(unsigned int), &modelIndices[0], GL_STATIC_DRAW);
+
+	// set the vertex attribute pointers
+	// vertex Positions
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void *)0);
+	// vertex normals
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void *)offsetof(ModelVertex, Normal));
+	// vertex texture coords
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void *)offsetof(ModelVertex, TexCoords));
+	// vertex tangent
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void *)offsetof(ModelVertex, Tangent));
+	// vertex bitangent
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(ModelVertex), (void *)offsetof(ModelVertex, Bitangent));
+
+	glBindVertexArray(0);
+	m_vaos.insert(std::pair<std::string, unsigned int>(vaoName, vao));
+}
+
 RenderObject::~RenderObject()
 {
 	std::map<std::string, unsigned int>::iterator it;
@@ -117,11 +156,10 @@ void RenderObject::setPointLightPositions(unsigned int positionCount, Vector3 po
 	}
 }
 
-void RenderObject::render() const
+void RenderObject::renderCube()
 {
 	Engine &engine = Engine::get_singleton();
 	Camera *camera = engine.getCamera();
-	TextureManager &textureManager = TextureManager::get_singleton();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
 
 	Shader *lightingShader = shaderManager.getShaders().at("lightingShader");
@@ -172,7 +210,8 @@ void RenderObject::render() const
 	lightingShader->setMat4("model", model);
 
 	// 为lightingShader渲染所有纹理
-	textureManager.renderAllTexture(lightingShader);
+	lightingShader->renderTextures();
+	// textureManager.render
 
 	// 渲染十个箱子
 	glBindVertexArray(cubeVAO);
@@ -202,4 +241,42 @@ void RenderObject::render() const
 
 	lightingShader->unbind();
 	lightCubeShader->unbind();
+}
+
+void RenderObject::renderModel()
+{
+	Engine &engine = Engine::get_singleton();
+	Camera *camera = engine.getCamera();
+	ShaderManager &shaderManager = ShaderManager::get_singleton();
+	ModelManager &modelManager = ModelManager::get_singleton();
+
+	Shader *ourShader = shaderManager.getShaders().at("ourShader");
+	Model *ourModel = modelManager.getModels().at("ourModel");
+	unsigned int modelVAO = m_vaos.at("modelVAO");
+	ourShader->bind();
+	glBindVertexArray(modelVAO);
+	ourShader->renderTextures(ourModel->getModelTexturesName());
+	
+	// view/projection transformations
+	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
+	Matrix4 view = camera->GetViewMatrix();
+	ourShader->setMat4("projection", projection);
+	ourShader->setMat4("view", view);
+
+	// render the loaded model
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, Vector3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+	model = glm::scale(model, Vector3(0.2f, 0.2f, 0.2f));		// it's a bit too big for our scene, so scale it down
+	ourShader->setMat4("model", model);
+
+	glDrawElements(GL_TRIANGLES, ourModel->getModelIndices().size(), GL_UNSIGNED_INT, 0);
+
+	ourShader->unbind();
+	glBindVertexArray(0);
+}
+
+void RenderObject::render()
+{
+	renderCube();
+	renderModel();
 }

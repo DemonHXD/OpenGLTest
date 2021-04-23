@@ -9,10 +9,25 @@
 
 class Texture;
 class Shader;
+
 class RenderObject
 {
-
 public:
+
+	struct ModelVertex
+	{
+		// position
+		Vector3 Position;
+		// normal
+		Vector3 Normal;
+		// texCoords
+		Vector2 TexCoords;
+		// tangent
+		Vector3 Tangent;
+		// bitangent
+		Vector3 Bitangent;
+	};
+
 	struct VertexAttr
 	{
 		enum class ElementType : int
@@ -25,16 +40,17 @@ public:
 		bool normalization;
 	};
 	typedef std::vector<VertexAttr> VertexFormat;
-	
+
 	RenderObject();
 	~RenderObject();
 
-	void setRenderObject(const std::string vaoName, const VertexFormat& vertex_format, const void* vertex_data, size_t vertex_count, const unsigned int* indices, size_t index_count);
+	void setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count);
 	void setRenderObject(const std::string vaoName, size_t vertex_count);
-	void render() const;
+	void setRenderObject(const std::string vaoName, const std::vector<ModelVertex> modelVertex, std::vector<unsigned int> modelIndices);
+	void render();
 
 	Matrix4 get_model_matrix(Vector3 position) const { return glm::translate(glm::mat4(1.0f), position); }
-	
+
 	const std::vector<Vector3> getPositions() const { return m_positions; }
 	void setPosition(unsigned int positionCount, Vector3 positions[]);
 
@@ -42,8 +58,12 @@ public:
 	void setPointLightPositions(unsigned int positionCount, Vector3 pointLightPositions[]);
 
 	void setPositionIndex(const int index) { m_position_index = index; }
-	
+
 private:
+
+	void renderCube();
+	void renderModel();
+
 	std::map<std::string, unsigned int> m_vaos;
 	// unsigned int m_vao;
 	unsigned int m_vbo;
