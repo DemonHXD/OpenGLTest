@@ -23,14 +23,6 @@ int main()
 		return -1;
 	}
 
-	Shader* lightingShader = new Shader();
-	if (!lightingShader->loadShaderAsset("light_vertexShader.vs", "light_fragmentShader.fs"))
-	{
-		return -1;
-	}
-	lightingShader->setTexturesName(2, "material.diffuse", "material.specular");
-	lightingShader->setTextures(2, "container2.png", "container2_specular.png");
-	
 	Shader* lightCubeShader = new Shader();
 	if (!lightCubeShader->loadShaderAsset("light_vertexShader2.vs", "light_fragmentShader2.fs"))
 	{
@@ -45,7 +37,6 @@ int main()
 	}
 	ourShader->bind();
 	std::map<std::string, Shader*> shaderMap;
-	shaderMap.insert(std::pair<std::string, Shader*>("lightingShader", lightingShader));
 	shaderMap.insert(std::pair<std::string, Shader*>("lightCubeShader", lightCubeShader));
 	shaderMap.insert(std::pair<std::string, Shader *>("ourShader", ourShader));
 	shaderManager->addLoadShader(shaderMap);
@@ -132,14 +123,7 @@ int main()
 		Vector3( 0.0f,  0.0f, -3.0f)
 	};
 
-	RenderObject::VertexFormat vf;
-	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
-	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
-	vf.push_back({ 2, RenderObject::VertexAttr::ElementType::Float, false });
-
-	object->setRenderObject("cubeVAO", vf, vertices, 36, NULL, 0);
-	object->setRenderObject("lightCubeVAO", 8);
-	object->setPosition(10, positions);
+	object->setRenderObject("lightCubeVAO", vertices, 8);
 	object->setPointLightPositions(4, pointLightPositions);
 
 	render->addRenderObject(object);

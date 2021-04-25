@@ -31,7 +31,7 @@ public:
 	~RenderObject();
 
 	void setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count);
-	void setRenderObject(const std::string vaoName, size_t vertex_count);
+	void setRenderObject(const std::string vaoName, const void *vertex_data, size_t vertex_count);
 	void setRenderObject(std::vector<Model::MeshVertex> meshVertexs);
 	void render();
 

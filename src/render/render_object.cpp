@@ -1,6 +1,7 @@
 ﻿#include "glad/glad.h"
 #include "render_object.h"
 #include <cassert>
+#include <GLFW/glfw3.h>
 #include "texture.h"
 #include "shader.h"
 #include "model.h"
@@ -78,12 +79,14 @@ void RenderObject::setRenderObject(const std::string vaoName, const VertexFormat
 	glBindVertexArray(0);
 }
 
-void RenderObject::setRenderObject(const std::string vaoName, size_t vertex_count)
+void RenderObject::setRenderObject(const std::string vaoName, const void *vertex_data, size_t vertex_count)
 {
-	unsigned int vao;
+	unsigned int vao, vbo;
 	glGenVertexArrays(1, &vao);
+	glGenBuffers(1, &vbo);
 	glBindVertexArray(vao);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(float) * 36, vertex_data, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertex_count * sizeof(float), (void *)0);
 	glEnableVertexAttribArray(0);
 	m_vaos.insert(std::pair<std::string, unsigned int>(vaoName, vao));
@@ -166,97 +169,39 @@ void RenderObject::renderCube()
 	Engine &engine = Engine::get_singleton();
 	Camera *camera = engine.getCamera();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
-
-	Shader *lightingShader = shaderManager.getShaders().at("lightingShader");
 	Shader *lightCubeShader = shaderManager.getShaders().at("lightCubeShader");
-
-	unsigned int cubeVAO = m_vaos.at("cubeVAO");
 	unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
-
-	lightingShader->bind();
-
-	lightingShader->setVec3("viewPos", camera->getPosition());
-	lightingShader->setFloat("material.shininess", 32.0f);
-	// directional light
-	lightingShader->setVec3("dirLight.direction", m_dirLight_data.direction);
-	lightingShader->setVec3("dirLight.ambient", m_dirLight_data.ambient);
-	lightingShader->setVec3("dirLight.diffuse", m_dirLight_data.diffuse);
-	lightingShader->setVec3("dirLight.specular", m_dirLight_data.specular);
-
-	for (unsigned int i = 0; i < m_point_light_positions.size(); i++)
-	{
-		std::string argsName = LibUtils::getInstance()->formatString("pointLights[%d]", i);
-		lightingShader->setVec3(argsName + ".position", m_point_light_positions[i]);
-		lightingShader->setVec3(argsName + ".ambient", m_pointLights_data.ambient);
-		lightingShader->setVec3(argsName + ".diffuse", m_pointLights_data.diffuse);
-		lightingShader->setVec3(argsName + ".specular", m_pointLights_data.specular);
-		lightingShader->setFloat(argsName + ".constant", m_pointLights_data.constant);
-		lightingShader->setFloat(argsName + ".linear", m_pointLights_data.linear);
-		lightingShader->setFloat(argsName + ".quadratic", m_pointLights_data.quadratic);
-	}
-
-	// spotLight
-	lightingShader->setVec3("spotLight.position", camera->getPosition());
-	lightingShader->setVec3("spotLight.direction", camera->getFront());
-	lightingShader->setVec3("spotLight.ambient", m_spotLightData_data.ambient);
-	lightingShader->setVec3("spotLight.diffuse", m_spotLightData_data.diffuse);
-	lightingShader->setVec3("spotLight.specular", m_spotLightData_data.specular);
-	lightingShader->setFloat("spotLight.constant", m_spotLightData_data.constant);
-	lightingShader->setFloat("spotLight.linear", m_spotLightData_data.linear);
-	lightingShader->setFloat("spotLight.quadratic", m_spotLightData_data.quadratic);
-	lightingShader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	lightingShader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
 	Matrix4 view = camera->GetViewMatrix();
-	lightingShader->setMat4("projection", projection);
-	lightingShader->setMat4("view", view);
 	Matrix4 model = Matrix4(1.0f);
-	lightingShader->setMat4("model", model);
-
-	// 为lightingShader渲染所有纹理
-	lightingShader->renderTextures();
-
-	// 渲染十个箱子
-	glBindVertexArray(cubeVAO);
-	for (unsigned int i = 0; i < 10; i++)
-	{
-		Matrix4 model = Matrix4(1.0f);
-		model = glm::translate(model, m_positions[i]);
-		float angle = 20.0f * i;
-		model = glm::rotate(model, glm::radians(angle), Vector3(1.0f, 0.3f, 0.5f));
-		lightingShader->setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
 
 	lightCubeShader->bind();
 	lightCubeShader->setMat4("projection", projection);
 	lightCubeShader->setMat4("view", view);
-	// 渲染四个发光体
+	model = glm::mat4(1.0f);
+	float timeValue = glfwGetTime();
+	float changeValueSin = sin(timeValue) / 0.6f + 1.2f;
+	float changeValueCos = cos(timeValue) / 0.6f;
+	model = glm::translate(model, Vector3(changeValueSin,  1.6f, changeValueCos));
+	model = glm::scale(model, glm::vec3(0.2f));
+	lightCubeShader->setMat4("model", model);
 	glBindVertexArray(lightCubeVAO);
-	for (unsigned int i = 0; i < 4; i++)
-	{
-		model = Matrix4(1.0f);
-		model = glm::translate(model, m_point_light_positions[i]);
-		model = glm::scale(model, Vector3(0.2f));
-		lightCubeShader->setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	lightingShader->unbind();
 	lightCubeShader->unbind();
 }
 
 void RenderObject::renderModel()
 {
+	Engine &engine = Engine::get_singleton();
+	Camera *camera = engine.getCamera();
+	ShaderManager &shaderManager = ShaderManager::get_singleton();
+	ModelManager &modelManager = ModelManager::get_singleton();
+
+	Shader *ourShader = shaderManager.getShaders().at("ourShader");
 	for (unsigned int i = 0; i < m_meshVertexs.size(); i++)
 	{
-		Engine &engine = Engine::get_singleton();
-		Camera *camera = engine.getCamera();
-		ShaderManager &shaderManager = ShaderManager::get_singleton();
-		ModelManager &modelManager = ModelManager::get_singleton();
-
-		Shader *ourShader = shaderManager.getShaders().at("ourShader");
 		ourShader->bind();
 		ourShader->renderTextures(m_meshVertexs[i].texturesName, m_meshVertexs[i].textures);
 
