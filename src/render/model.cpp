@@ -22,7 +22,6 @@ bool Model::loadModelAsset(const std::string &AssetName)
     }
 
     processNode(scene->mRootNode, scene);
-    // texturesSortSetName();
     return true;
 }
 
@@ -113,12 +112,8 @@ void Model::loadMeshVertex(aiMesh *mesh, const aiScene *scene)
     std::vector<Texture*> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     // m_textures.insert(std::pair<std::string, std::vector<Texture *>>("texture_height", heightMaps));
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
-    MeshVertex meshV;
-    meshV.vertices = vertices;
-    meshV.indices = indices;
-    meshV.textures = textures;
-    meshV.texturesName = texturesSortSetName(textures);
-    m_mesh_vertex.push_back(meshV);
+
+    m_mesh_vertex.push_back(MeshVertex(vertices, indices, textures, texturesSortSetName(textures)));
 }
 
 std::vector<std::string> Model::texturesSortSetName(std::vector<Texture*> textures)
@@ -147,10 +142,6 @@ std::vector<std::string> Model::texturesSortSetName(std::vector<Texture*> textur
 
 std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)
 {
-    static unsigned int diffuseNr  = 1;
-    static unsigned int specularNr = 1;
-    static unsigned int normalNr   = 1;
-    static unsigned int heightNr   = 1;
     std::vector<Texture*> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
     {

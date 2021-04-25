@@ -33,6 +33,14 @@ public:
         std::vector<unsigned int> indices;
         std::vector<Texture *> textures;
         std::vector<std::string> texturesName;
+        
+        MeshVertex(std::vector<ModelVertex> vertices, std::vector<unsigned int> indices,
+            std::vector<Texture *> textures, std::vector<std::string> texturesName)
+            : vertices(vertices),
+            indices(indices),
+            textures(textures),
+            texturesName(texturesName)
+            {}
     };
 
 public:
