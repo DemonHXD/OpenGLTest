@@ -147,7 +147,6 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClCompile Include="..\src\render\shader.cpp" />
     <ClCompile Include="..\src\render\shader_manager.cpp" />
     <ClCompile Include="..\src\render\texture.cpp" />
-    <ClCompile Include="..\src\render\texture_manager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\common\json_load.h" />
@@ -163,7 +162,6 @@ opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     <ClInclude Include="..\src\render\shader.h" />
     <ClInclude Include="..\src\render\shader_manager.h" />
     <ClInclude Include="..\src\render\texture.h" />
-    <ClInclude Include="..\src\render\texture_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\asset\light\container2.png" />

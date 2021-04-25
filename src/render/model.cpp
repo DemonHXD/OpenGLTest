@@ -42,12 +42,12 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 
 void Model::loadMeshVertex(aiMesh *mesh, const aiScene *scene)
 {
-    std::vector<RenderObject::ModelVertex> vertices;
+    std::vector<ModelVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<Texture*> textures;
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
-        RenderObject::ModelVertex vertex;
+        ModelVertex vertex;
         Vector3 vector;
         // positions
         vector.x = mesh->mVertices[i].x;

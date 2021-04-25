@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "texture.h"
 #include "../common/math.h"
 
 class Shader
@@ -19,8 +20,8 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
-	//void renderTextures(std::vector<std::string> texturesName = std::vector<std::string>(),
-	//	std::vector<Texture*> textures = std::vector<Texture*>());
+	void renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures);
+	void renderTextures(unsigned int loadTextureCount, ...);
 	void bind() const;
 	void unbind() const;
 

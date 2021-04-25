@@ -4,7 +4,6 @@
 #include "render/shader.h"
 #include "render/render.h"
 #include "render/render_object.h"
-#include "render/texture_manager.h"
 #include "render/shader_manager.h"
 #include "render/model_manager.h"
 #include "render/model.h"
@@ -16,7 +15,6 @@ int main()
 
 	std::shared_ptr<Engine> engine = std::make_shared<Engine>();
 	std::shared_ptr<Render> render = std::make_shared<Render>();
-	std::shared_ptr<TextureManager> textureManager = std::make_shared<TextureManager>();
 	std::shared_ptr<ShaderManager> shaderManager = std::make_shared<ShaderManager>();
 	std::shared_ptr<ModelManager> mondelManager = std::make_shared<ModelManager>();
 
@@ -58,21 +56,20 @@ int main()
 	{
 		return -1;
 	}
-	std::vector<Model::MeshVertex> meshVertex = ourModel->getMeshVertex();
 	// 添加渲染贴图数据
 
 	std::map<std::string, Model *> modelMap;
 	modelMap.insert(std::pair<std::string, Model *>("ourModel", ourModel));
 	mondelManager->addLoadModel(modelMap);
 
+	std::vector<Model::MeshVertex> meshVertex = ourModel->getMeshVertex();
+	RenderObject *object = new RenderObject();
 	// 渲染模型
-	for(unsigned int i = 0; i < meshVertex.size(); i++)
-	{
-		RenderObject *object = new RenderObject();
-		//textureManager->addLoadTexture(ourShader, meshVertex[i].textures);
-		object->setRenderObject(meshVertex[i].vertices, meshVertex[i].indices, meshVertex[i].texturesName, meshVertex[i].textures);
-		render->addRenderObject(object);
-	}
+	// for(unsigned int i = 0; i < meshVertex.size(); i++)
+	// {
+	object->setRenderObject(meshVertex);
+	render->addRenderObject(object);
+	// }
 	
 	//float vertices[] = {
 	//	// positions            // normals     // texture coords

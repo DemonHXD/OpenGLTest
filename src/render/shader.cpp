@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "texture_manager.h"
+#include "texture.h"
 #include "../engine/engine.h"
 
 bool Shader::loadShaderAsset(const char *vertexAssetName, const char *fragmentAssetName)
@@ -128,11 +128,43 @@ void Shader::setTextureNames(unsigned int textureNameCount, ...)
 	__crt_va_end(arg);
 }
 
-//void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures)
-//{
-//	TextureManager &textureManager = TextureManager::get_singleton();
-//	textureManager.renderTexturesByShaderId(texturesName, textures);
-//}
+void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<Texture *> textures)
+{
+	if (textures.empty())
+	{
+		std::cout << "texture render fail......" << std::endl;
+		return;
+	}
+
+	for (unsigned int index = 0; index < textures.size(); index++)
+	{
+		std::string uniformName = texturesName[index];
+		glActiveTexture(GL_TEXTURE0 + index);
+		setInt(uniformName, index);
+		textures[index]->active();
+	}
+}
+
+void Shader::renderTextures(unsigned int loadTextureCount, ...)
+{
+	Engine &engine = Engine::get_singleton();
+	va_list arg;
+	auto textureNames = getTextureNames();
+	if (textureNames.empty())
+	{
+		std::cout << "textureNames is empty......" << std::endl;
+		return;
+	}
+	__crt_va_start(arg, loadTextureCount);
+	for (int i = 0; i < loadTextureCount; i++)
+	{
+		const char *texturePath = __crt_va_arg(arg, char *);
+		Texture *texture = new Texture();
+		texture->setUniformName(textureNames[i]);
+		assert(texture->load(engine.getAssetPathByName(texturePath), true));
+	}
+	__crt_va_end(arg);
+}
 
 void Shader::setBool(const std::string &name, bool value) const
 {

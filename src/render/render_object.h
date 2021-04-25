@@ -6,6 +6,7 @@
 #include "../common/math.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include "../common/json_load.h"
+#include "model.h"
 
 class Texture;
 class Shader;
@@ -13,21 +14,6 @@ class Shader;
 class RenderObject
 {
 public:
-
-	struct ModelVertex
-	{
-		// position
-		Vector3 Position;
-		// normal
-		Vector3 Normal;
-		// texCoords
-		Vector2 TexCoords;
-		// tangent
-		Vector3 Tangent;
-		// bitangent
-		Vector3 Bitangent;
-	};
-
 	struct VertexAttr
 	{
 		enum class ElementType : int
@@ -46,10 +32,7 @@ public:
 
 	void setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count);
 	void setRenderObject(const std::string vaoName, size_t vertex_count);
-	void setRenderObject(const std::vector<ModelVertex> modelVertex, 
-		std::vector<unsigned int> modelIndices, 
-		std::vector<std::string> texturesName,
-		std::vector<Texture*> textures);
+	void setRenderObject(std::vector<Model::MeshVertex> meshVertexs);
 	void render();
 
 	Matrix4 get_model_matrix(Vector3 position) const { return glm::translate(glm::mat4(1.0f), position); }
@@ -84,9 +67,9 @@ private:
 	JsonLoad::PointLightsData m_pointLights_data;
 	JsonLoad::PointLightsData m_spotLightData_data;
 
-	std::vector<ModelVertex> m_modelVertex;
-	std::vector<unsigned int> m_modelIndices;
-	std::vector<std::string> m_texturesName;
-	std::vector<Texture*> m_textures;
+	std::vector<Model::MeshVertex> m_meshVertexs;
+	std::vector<std::vector<std::string>> m_model_texturesName;
+	std::vector<std::vector<Texture*>> m_model_textures;
+	std::map<std::string, unsigned int> m_model_vaos;
 };
 #endif
