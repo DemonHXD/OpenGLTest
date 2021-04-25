@@ -43,29 +43,27 @@ void TextureManager::addLoadTexture(Shader *shader, std::vector<Texture *> textu
     m_map_ts.insert(std::pair<unsigned int, TextureShader *>(shader->getShadeID(), m_ts));
 }
 
-void TextureManager::renderTexturesByShaderId(unsigned int shaderID, std::vector<std::string> texturesName)
-{
-    TextureShader *value = m_map_ts[shaderID];
-    if (value->textures.empty())
-    {
-        std::cout << "texture render fail......" << std::endl;
-        return;
-    }
-    int index = 0;
-    for (Texture *texture : value->textures)
-    {
-        std::string uniformName;
-        if(texturesName.size() == 0) 
-        {
-            uniformName = texture->getUniformName();
-        }else
-        {
-            uniformName = texturesName[index];
-        }
-        glActiveTexture(GL_TEXTURE0 + index);
-        value->shader->setInt(uniformName, index);
-        texture->active();
-        index++;
-    }
-	glActiveTexture(GL_TEXTURE0);
-}
+//void TextureManager::renderTexturesByShaderId(unsigned int shaderID, std::vector<std::string> texturesName)
+//{
+//    TextureShader *value = m_map_ts[shaderID];
+//    if (value->textures.empty())
+//    {
+//        std::cout << "texture render fail......" << std::endl;
+//        return;
+//    }
+//
+//    for (unsigned int index = 0; index < value->textures.size(); index++)
+//    {
+//        std::string uniformName;
+//        if(texturesName.size() == 0) 
+//        {
+//            uniformName = value->textures[index]->getUniformName();
+//        }else
+//        {
+//            uniformName = texturesName[index];
+//        }
+//        glActiveTexture(GL_TEXTURE0 + index);
+//        value->shader->setInt(uniformName, index);
+//		value->textures[index]->active();
+//    }
+//}

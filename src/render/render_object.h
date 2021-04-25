@@ -46,7 +46,10 @@ public:
 
 	void setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count);
 	void setRenderObject(const std::string vaoName, size_t vertex_count);
-	void setRenderObject(const std::string vaoName, const std::vector<ModelVertex> modelVertex, std::vector<unsigned int> modelIndices);
+	void setRenderObject(const std::vector<ModelVertex> modelVertex, 
+		std::vector<unsigned int> modelIndices, 
+		std::vector<std::string> texturesName,
+		std::vector<Texture*> textures);
 	void render();
 
 	Matrix4 get_model_matrix(Vector3 position) const { return glm::translate(glm::mat4(1.0f), position); }
@@ -61,11 +64,11 @@ public:
 
 private:
 
-	void renderCube();
+	//void renderCube();
 	void renderModel();
 
 	std::map<std::string, unsigned int> m_vaos;
-	// unsigned int m_vao;
+	unsigned int m_vao;
 	unsigned int m_vbo;
 	unsigned int m_ebo;
 	size_t m_vertex_count;
@@ -80,5 +83,10 @@ private:
 	JsonLoad::DirLightData m_dirLight_data;
 	JsonLoad::PointLightsData m_pointLights_data;
 	JsonLoad::PointLightsData m_spotLightData_data;
+
+	std::vector<ModelVertex> m_modelVertex;
+	std::vector<unsigned int> m_modelIndices;
+	std::vector<std::string> m_texturesName;
+	std::vector<Texture*> m_textures;
 };
 #endif

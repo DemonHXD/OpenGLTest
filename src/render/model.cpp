@@ -22,7 +22,7 @@ bool Model::loadModelAsset(const std::string &AssetName)
     }
 
     processNode(scene->mRootNode, scene);
-    texturesSortSetName();
+    // texturesSortSetName();
     return true;
 }
 
@@ -42,6 +42,9 @@ void Model::processNode(aiNode *node, const aiScene *scene)
 
 void Model::loadMeshVertex(aiMesh *mesh, const aiScene *scene)
 {
+    std::vector<RenderObject::ModelVertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<Texture*> textures;
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
         RenderObject::ModelVertex vertex;
@@ -82,13 +85,13 @@ void Model::loadMeshVertex(aiMesh *mesh, const aiScene *scene)
         {
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
-        m_vertices.push_back(vertex);
+        vertices.push_back(vertex);
     }
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
         for (unsigned int j = 0; j < face.mNumIndices; j++)
-            m_indices.push_back(face.mIndices[j]);
+            indices.push_back(face.mIndices[j]);
     }
 
     // process materials
@@ -97,31 +100,38 @@ void Model::loadMeshVertex(aiMesh *mesh, const aiScene *scene)
     // 1. diffuse maps
     std::vector<Texture*> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
     // m_textures.insert(std::pair<std::string, std::vector<Texture *>>("texture_diffuse", diffuseMaps));
-    m_textures.insert(m_textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
     // 2. specular maps
     std::vector<Texture*> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
     // m_textures.insert(std::pair<std::string, std::vector<Texture *>>("texture_specular", specularMaps));
-    m_textures.insert(m_textures.end(), specularMaps.begin(), specularMaps.end());
+    textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     // 3. normal maps
     std::vector<Texture*> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
     // m_textures.insert(std::pair<std::string, std::vector<Texture *>>("texture_normal", normalMaps));
-    m_textures.insert(m_textures.end(), normalMaps.begin(), normalMaps.end());
+    textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
     // 4. height maps
     std::vector<Texture*> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
     // m_textures.insert(std::pair<std::string, std::vector<Texture *>>("texture_height", heightMaps));
-    m_textures.insert(m_textures.end(), heightMaps.begin(), heightMaps.end());
+    textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+    MeshVertex meshV;
+    meshV.vertices = vertices;
+    meshV.indices = indices;
+    meshV.textures = textures;
+    meshV.texturesName = texturesSortSetName(textures);
+    m_mesh_vertex.push_back(meshV);
 }
 
-void Model::texturesSortSetName()
+std::vector<std::string> Model::texturesSortSetName(std::vector<Texture*> textures)
 {
+    std::vector<std::string> texturesName;
     unsigned int diffuseNr  = 1;
     unsigned int specularNr = 1;
     unsigned int normalNr   = 1;
     unsigned int heightNr   = 1;
-    for(unsigned int i = 0; i < m_textures.size(); i++)
+    for(unsigned int i = 0; i < textures.size(); i++)
     {
         std::string number;
-        std::string name = m_textures[i]->type;
+        std::string name = textures[i]->type;
         if(name == "texture_diffuse")
             number = std::to_string(diffuseNr++);
         else if(name == "texture_specular")
@@ -130,8 +140,9 @@ void Model::texturesSortSetName()
             number = std::to_string(normalNr++); // transfer unsigned int to stream
         else if(name == "texture_height")
             number = std::to_string(heightNr++); // transfer unsigned int to stream
-        m_textures_name.push_back((name + number).c_str());
+        texturesName.push_back((name + number).c_str());
     }
+    return texturesName;
 }
 
 std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName)

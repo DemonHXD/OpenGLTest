@@ -19,7 +19,8 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
-	void renderTextures(std::vector<std::string> texturesName = std::vector<std::string>());
+	//void renderTextures(std::vector<std::string> texturesName = std::vector<std::string>(),
+	//	std::vector<Texture*> textures = std::vector<Texture*>());
 	void bind() const;
 	void unbind() const;
 

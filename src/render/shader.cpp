@@ -128,11 +128,11 @@ void Shader::setTextureNames(unsigned int textureNameCount, ...)
 	__crt_va_end(arg);
 }
 
-void Shader::renderTextures(std::vector<std::string> texturesName)
-{
-	TextureManager &textureManager = TextureManager::get_singleton();
-	textureManager.renderTexturesByShaderId(m_shaderID, texturesName);
-}
+//void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures)
+//{
+//	TextureManager &textureManager = TextureManager::get_singleton();
+//	textureManager.renderTexturesByShaderId(texturesName, textures);
+//}
 
 void Shader::setBool(const std::string &name, bool value) const
 {

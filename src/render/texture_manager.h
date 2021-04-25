@@ -1,4 +1,4 @@
-#ifndef _TEXTURE_MANAGER_H_
+﻿#ifndef _TEXTURE_MANAGER_H_
 #define _TEXTURE_MANAGER_H_
 
 #include "../common/singleton.h"
@@ -21,7 +21,7 @@ public:
     void addLoadTexture(Shader* shader, unsigned int loadTextureCount, ...);
     void addLoadTexture(Shader* shader, std::vector<Texture *> mapTextures);
 
-    void renderTexturesByShaderId(unsigned int shaderID, std::vector<std::string> texturesName = std::vector<std::string>());
+    //void renderTexturesByShaderId(unsigned int shaderID, std::vector<std::string> texturesName = std::vector<std::string>());
 private:
     // std::vector<Texture*> m_textures;
     // TextureShader m_ts;

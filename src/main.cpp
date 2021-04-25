@@ -25,20 +25,20 @@ int main()
 		return -1;
 	}
 
-	Shader* lightingShader = new Shader();
-	if (!lightingShader->loadShaderAsset("light_vertexShader.vs", "light_fragmentShader.fs"))
-	{
-		return -1;
-	}
-	lightingShader->setTextureNames(2, "material.diffuse", "material.specular");
-	textureManager->addLoadTexture(lightingShader, 2, "container2.png", "container2_specular.png");
-	
-	Shader* lightCubeShader = new Shader();
-	if (!lightCubeShader->loadShaderAsset("light_vertexShader2.vs", "light_fragmentShader2.fs"))
-	{
-		return -1;
-	}
-	lightCubeShader->bind();
+	//Shader* lightingShader = new Shader();
+	//if (!lightingShader->loadShaderAsset("light_vertexShader.vs", "light_fragmentShader.fs"))
+	//{
+	//	return -1;
+	//}
+	//lightingShader->setTextureNames(2, "material.diffuse", "material.specular");
+	//textureManager->addLoadTexture(lightingShader, 2, "container2.png", "container2_specular.png");
+	//
+	//Shader* lightCubeShader = new Shader();
+	//if (!lightCubeShader->loadShaderAsset("light_vertexShader2.vs", "light_fragmentShader2.fs"))
+	//{
+	//	return -1;
+	//}
+	//lightCubeShader->bind();
 
 	Shader *ourShader = new Shader();
 	if (!ourShader->loadShaderAsset("model_loading.vs", "model_loading.fs"))
@@ -48,8 +48,8 @@ int main()
 	ourShader->bind();
 
 	std::map<std::string, Shader*> shaderMap;
-	shaderMap.insert(std::pair<std::string, Shader*>("lightingShader", lightingShader));
-	shaderMap.insert(std::pair<std::string, Shader*>("lightCubeShader", lightCubeShader));
+	//shaderMap.insert(std::pair<std::string, Shader*>("lightingShader", lightingShader));
+	//shaderMap.insert(std::pair<std::string, Shader*>("lightCubeShader", lightCubeShader));
 	shaderMap.insert(std::pair<std::string, Shader *>("ourShader", ourShader));
 	shaderManager->addLoadShader(shaderMap);
 
@@ -58,92 +58,96 @@ int main()
 	{
 		return -1;
 	}
+	std::vector<Model::MeshVertex> meshVertex = ourModel->getMeshVertex();
 	// 添加渲染贴图数据
-	textureManager->addLoadTexture(ourShader, ourModel->getModelTextures());
 
 	std::map<std::string, Model *> modelMap;
 	modelMap.insert(std::pair<std::string, Model *>("ourModel", ourModel));
 	mondelManager->addLoadModel(modelMap);
 
-	RenderObject *object = new RenderObject();
 	// 渲染模型
-	object->setRenderObject("modelVAO", ourModel->getModelVertex(), ourModel->getModelIndices());
+	for(unsigned int i = 0; i < meshVertex.size(); i++)
+	{
+		RenderObject *object = new RenderObject();
+		//textureManager->addLoadTexture(ourShader, meshVertex[i].textures);
+		object->setRenderObject(meshVertex[i].vertices, meshVertex[i].indices, meshVertex[i].texturesName, meshVertex[i].textures);
+		render->addRenderObject(object);
+	}
 	
-	float vertices[] = {
-		// positions            // normals     // texture coords
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+	//float vertices[] = {
+	//	// positions            // normals     // texture coords
+	//	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+	//	 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+	//	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+	//	 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+	//	-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+	//	-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+	//	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+	//	 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+	//	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+	//	 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+	//	-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+	//	-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	//	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	//	-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+	//	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	//	-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	//	-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+	//	-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	//	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+	//	 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+	//	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	//	 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+	//	 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+	//	 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+	//	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+	//	 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+	//	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	//	 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+	//	-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+	//	-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
-	};
+	//	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+	//	 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+	//	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+	//	 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+	//	-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+	//	-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
+	//};
 
-	Vector3 positions[] = {
-		Vector3(0.0f,  0.0f,  0.0f),
-		Vector3(2.0f,  5.0f, -15.0f),
-		Vector3(-1.5f, -2.2f, -2.5f),
-		Vector3(-3.8f, -2.0f, -12.3f),
-		Vector3(2.4f, -0.4f, -3.5f),
-		Vector3(-1.7f,  3.0f, -7.5f),
-		Vector3(1.3f, -2.0f, -2.5f),
-		Vector3(1.5f,  2.0f, -2.5f),
-		Vector3(1.5f,  0.2f, -1.5f),
-		Vector3(-1.3f,  1.0f, -1.5f)
-	};
+	//Vector3 positions[] = {
+	//	Vector3(0.0f,  0.0f,  0.0f),
+	//	Vector3(2.0f,  5.0f, -15.0f),
+	//	Vector3(-1.5f, -2.2f, -2.5f),
+	//	Vector3(-3.8f, -2.0f, -12.3f),
+	//	Vector3(2.4f, -0.4f, -3.5f),
+	//	Vector3(-1.7f,  3.0f, -7.5f),
+	//	Vector3(1.3f, -2.0f, -2.5f),
+	//	Vector3(1.5f,  2.0f, -2.5f),
+	//	Vector3(1.5f,  0.2f, -1.5f),
+	//	Vector3(-1.3f,  1.0f, -1.5f)
+	//};
 
-	Vector3 pointLightPositions[] = {
-		Vector3( 0.7f,  0.2f,  2.0f),
-		Vector3( 2.3f, -3.3f, -4.0f),
-		Vector3(-4.0f,  2.0f, -12.0f),
-		Vector3( 0.0f,  0.0f, -3.0f)
-	};
+	//Vector3 pointLightPositions[] = {
+	//	Vector3( 0.7f,  0.2f,  2.0f),
+	//	Vector3( 2.3f, -3.3f, -4.0f),
+	//	Vector3(-4.0f,  2.0f, -12.0f),
+	//	Vector3( 0.0f,  0.0f, -3.0f)
+	//};
 
-	RenderObject::VertexFormat vf;
-	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
-	vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
-	vf.push_back({ 2, RenderObject::VertexAttr::ElementType::Float, false });
+	//RenderObject::VertexFormat vf;
+	//vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
+	//vf.push_back({ 3, RenderObject::VertexAttr::ElementType::Float, false });
+	//vf.push_back({ 2, RenderObject::VertexAttr::ElementType::Float, false });
 
-	object->setRenderObject("cubeVAO", vf, vertices, 36, NULL, 0);
-	object->setRenderObject("lightCubeVAO", 8);
-	object->setPosition(10, positions);
-	object->setPointLightPositions(4, pointLightPositions);
-	render->addRenderObject(object);
+	//object->setRenderObject("cubeVAO", vf, vertices, 36, NULL, 0);
+	//object->setRenderObject("lightCubeVAO", 8);
+	//object->setPosition(10, positions);
+	//object->setPointLightPositions(4, pointLightPositions);
 
 	engine->run();
 	engine->stopRun();
