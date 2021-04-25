@@ -161,92 +161,91 @@ void RenderObject::setPointLightPositions(unsigned int positionCount, Vector3 po
 	}
 }
 
-//void RenderObject::renderCube()
-//{
-//	Engine &engine = Engine::get_singleton();
-//	Camera *camera = engine.getCamera();
-//	ShaderManager &shaderManager = ShaderManager::get_singleton();
-//
-//	Shader *lightingShader = shaderManager.getShaders().at("lightingShader");
-//	Shader *lightCubeShader = shaderManager.getShaders().at("lightCubeShader");
-//
-//	unsigned int cubeVAO = m_vaos.at("cubeVAO");
-//	unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
-//
-//	lightingShader->bind();
-//
-//	lightingShader->setVec3("viewPos", camera->getPosition());
-//	lightingShader->setFloat("material.shininess", 32.0f);
-//	// directional light
-//	lightingShader->setVec3("dirLight.direction", m_dirLight_data.direction);
-//	lightingShader->setVec3("dirLight.ambient", m_dirLight_data.ambient);
-//	lightingShader->setVec3("dirLight.diffuse", m_dirLight_data.diffuse);
-//	lightingShader->setVec3("dirLight.specular", m_dirLight_data.specular);
-//
-//	for (unsigned int i = 0; i < m_point_light_positions.size(); i++)
-//	{
-//		std::string argsName = LibUtils::getInstance()->formatString("pointLights[%d]", i);
-//		lightingShader->setVec3(argsName + ".position", m_point_light_positions[i]);
-//		lightingShader->setVec3(argsName + ".ambient", m_pointLights_data.ambient);
-//		lightingShader->setVec3(argsName + ".diffuse", m_pointLights_data.diffuse);
-//		lightingShader->setVec3(argsName + ".specular", m_pointLights_data.specular);
-//		lightingShader->setFloat(argsName + ".constant", m_pointLights_data.constant);
-//		lightingShader->setFloat(argsName + ".linear", m_pointLights_data.linear);
-//		lightingShader->setFloat(argsName + ".quadratic", m_pointLights_data.quadratic);
-//	}
-//
-//	// spotLight
-//	lightingShader->setVec3("spotLight.position", camera->getPosition());
-//	lightingShader->setVec3("spotLight.direction", camera->getFront());
-//	lightingShader->setVec3("spotLight.ambient", m_spotLightData_data.ambient);
-//	lightingShader->setVec3("spotLight.diffuse", m_spotLightData_data.diffuse);
-//	lightingShader->setVec3("spotLight.specular", m_spotLightData_data.specular);
-//	lightingShader->setFloat("spotLight.constant", m_spotLightData_data.constant);
-//	lightingShader->setFloat("spotLight.linear", m_spotLightData_data.linear);
-//	lightingShader->setFloat("spotLight.quadratic", m_spotLightData_data.quadratic);
-//	lightingShader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-//	lightingShader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-//
-//	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
-//	Matrix4 view = camera->GetViewMatrix();
-//	lightingShader->setMat4("projection", projection);
-//	lightingShader->setMat4("view", view);
-//	Matrix4 model = Matrix4(1.0f);
-//	lightingShader->setMat4("model", model);
-//
-//	// 为lightingShader渲染所有纹理
-//	lightingShader->renderTextures();
-//	// textureManager.render
-//
-//	// 渲染十个箱子
-//	glBindVertexArray(cubeVAO);
-//	for (unsigned int i = 0; i < 10; i++)
-//	{
-//		Matrix4 model = Matrix4(1.0f);
-//		model = glm::translate(model, m_positions[i]);
-//		float angle = 20.0f * i;
-//		model = glm::rotate(model, glm::radians(angle), Vector3(1.0f, 0.3f, 0.5f));
-//		lightingShader->setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
-//	}
-//
-//	lightCubeShader->bind();
-//	lightCubeShader->setMat4("projection", projection);
-//	lightCubeShader->setMat4("view", view);
-//	// 渲染四个发光体
-//	glBindVertexArray(lightCubeVAO);
-//	for (unsigned int i = 0; i < 4; i++)
-//	{
-//		model = Matrix4(1.0f);
-//		model = glm::translate(model, m_point_light_positions[i]);
-//		model = glm::scale(model, Vector3(0.2f));
-//		lightCubeShader->setMat4("model", model);
-//		glDrawArrays(GL_TRIANGLES, 0, 36);
-//	}
-//
-//	lightingShader->unbind();
-//	lightCubeShader->unbind();
-//}
+void RenderObject::renderCube()
+{
+	Engine &engine = Engine::get_singleton();
+	Camera *camera = engine.getCamera();
+	ShaderManager &shaderManager = ShaderManager::get_singleton();
+
+	Shader *lightingShader = shaderManager.getShaders().at("lightingShader");
+	Shader *lightCubeShader = shaderManager.getShaders().at("lightCubeShader");
+
+	unsigned int cubeVAO = m_vaos.at("cubeVAO");
+	unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
+
+	lightingShader->bind();
+
+	lightingShader->setVec3("viewPos", camera->getPosition());
+	lightingShader->setFloat("material.shininess", 32.0f);
+	// directional light
+	lightingShader->setVec3("dirLight.direction", m_dirLight_data.direction);
+	lightingShader->setVec3("dirLight.ambient", m_dirLight_data.ambient);
+	lightingShader->setVec3("dirLight.diffuse", m_dirLight_data.diffuse);
+	lightingShader->setVec3("dirLight.specular", m_dirLight_data.specular);
+
+	for (unsigned int i = 0; i < m_point_light_positions.size(); i++)
+	{
+		std::string argsName = LibUtils::getInstance()->formatString("pointLights[%d]", i);
+		lightingShader->setVec3(argsName + ".position", m_point_light_positions[i]);
+		lightingShader->setVec3(argsName + ".ambient", m_pointLights_data.ambient);
+		lightingShader->setVec3(argsName + ".diffuse", m_pointLights_data.diffuse);
+		lightingShader->setVec3(argsName + ".specular", m_pointLights_data.specular);
+		lightingShader->setFloat(argsName + ".constant", m_pointLights_data.constant);
+		lightingShader->setFloat(argsName + ".linear", m_pointLights_data.linear);
+		lightingShader->setFloat(argsName + ".quadratic", m_pointLights_data.quadratic);
+	}
+
+	// spotLight
+	lightingShader->setVec3("spotLight.position", camera->getPosition());
+	lightingShader->setVec3("spotLight.direction", camera->getFront());
+	lightingShader->setVec3("spotLight.ambient", m_spotLightData_data.ambient);
+	lightingShader->setVec3("spotLight.diffuse", m_spotLightData_data.diffuse);
+	lightingShader->setVec3("spotLight.specular", m_spotLightData_data.specular);
+	lightingShader->setFloat("spotLight.constant", m_spotLightData_data.constant);
+	lightingShader->setFloat("spotLight.linear", m_spotLightData_data.linear);
+	lightingShader->setFloat("spotLight.quadratic", m_spotLightData_data.quadratic);
+	lightingShader->setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+	lightingShader->setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+
+	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
+	Matrix4 view = camera->GetViewMatrix();
+	lightingShader->setMat4("projection", projection);
+	lightingShader->setMat4("view", view);
+	Matrix4 model = Matrix4(1.0f);
+	lightingShader->setMat4("model", model);
+
+	// 为lightingShader渲染所有纹理
+	lightingShader->renderTextures();
+
+	// 渲染十个箱子
+	glBindVertexArray(cubeVAO);
+	for (unsigned int i = 0; i < 10; i++)
+	{
+		Matrix4 model = Matrix4(1.0f);
+		model = glm::translate(model, m_positions[i]);
+		float angle = 20.0f * i;
+		model = glm::rotate(model, glm::radians(angle), Vector3(1.0f, 0.3f, 0.5f));
+		lightingShader->setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	lightCubeShader->bind();
+	lightCubeShader->setMat4("projection", projection);
+	lightCubeShader->setMat4("view", view);
+	// 渲染四个发光体
+	glBindVertexArray(lightCubeVAO);
+	for (unsigned int i = 0; i < 4; i++)
+	{
+		model = Matrix4(1.0f);
+		model = glm::translate(model, m_point_light_positions[i]);
+		model = glm::scale(model, Vector3(0.2f));
+		lightCubeShader->setMat4("model", model);
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	lightingShader->unbind();
+	lightCubeShader->unbind();
+}
 
 void RenderObject::renderModel()
 {
@@ -269,8 +268,8 @@ void RenderObject::renderModel()
 
 		// render the loaded model
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, Vector3(0.0f, -1.2f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, Vector3(0.1f, 0.1f, 0.1f));	   // it's a bit too big for our scene, so scale it down
+		model = glm::translate(model, Vector3(1.2f, -1.2f, 0.0f)); // translate it down so it's at the center of the scene
+		model = glm::scale(model, Vector3(0.3f, 0.3f, 0.3f));	   // it's a bit too big for our scene, so scale it down
 		ourShader->setMat4("model", model);
 
 		std::string vaoName = "model_vao_" + std::to_string(i);
@@ -286,6 +285,6 @@ void RenderObject::renderModel()
 
 void RenderObject::render()
 {
-	//renderCube();
+	renderCube();
 	renderModel();
 }

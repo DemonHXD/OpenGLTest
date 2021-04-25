@@ -47,7 +47,7 @@ public:
 
 private:
 
-	//void renderCube();
+	void renderCube();
 	void renderModel();
 
 	std::map<std::string, unsigned int> m_vaos;

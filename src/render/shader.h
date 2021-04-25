@@ -21,7 +21,7 @@ public:
 
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
 	void renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures);
-	void renderTextures(unsigned int loadTextureCount, ...);
+	void renderTextures();
 	void bind() const;
 	void unbind() const;
 
@@ -30,12 +30,8 @@ public:
 		return m_shaderID;
 	}
 
-	void setTextureNames(unsigned int textureNameCount, ...);
-
-	std::vector<std::string> getTextureNames() const
-	{
-		return m_textureName;
-	}
+	void setTexturesName(unsigned int textureNameCount, ...);
+	void setTextures(unsigned int texturesCount, ...);
 
 	void setBool(const std::string &name, bool value) const;
 	void setInt(const std::string &name, int value) const;
@@ -57,7 +53,8 @@ private:
 	void createShaderProgram(int shaderCount, ...);
 private:
 	unsigned int m_shaderID;
-	std::vector<std::string> m_textureName;
+	std::vector<std::string> m_texturesName;
+	std::vector<Texture*> m_textures;
 };
 #endif // !_SHADER_H_
 

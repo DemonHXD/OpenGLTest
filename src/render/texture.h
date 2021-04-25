@@ -24,16 +24,6 @@ public:
 
 	void bindTextureType(unsigned int textureType);
 
-	std::string getUniformName() const
-	{
-		return m_uniformName;
-	}
-
-	void setUniformName(std::string name)
-	{
-		m_uniformName = name;
-	}
-
 	std::string type;
 	std::string path;
 
@@ -42,6 +32,5 @@ private:
 	unsigned int m_type;
 	int m_width;
 	int m_height;
-	std::string m_uniformName;
 };
 #endif // !_TEXTURE_H_

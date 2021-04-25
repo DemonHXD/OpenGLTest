@@ -116,14 +116,34 @@ void Shader::unbind() const
 	glUseProgram(0);
 }
 
-void Shader::setTextureNames(unsigned int textureNameCount, ...)
+void Shader::setTexturesName(unsigned int textureNameCount, ...)
 {
 	va_list arg;
 	__crt_va_start(arg, textureNameCount);
 	for (int i = 0; i < textureNameCount; i++)
 	{
 		const char *textureName = __crt_va_arg(arg, char *);
-		m_textureName.push_back(std::string(textureName));
+		m_texturesName.push_back(std::string(textureName));
+	}
+	__crt_va_end(arg);
+}
+
+void Shader::setTextures(unsigned int texturesCount, ...)
+{
+	Engine &engine = Engine::get_singleton();
+	va_list arg;
+	if (m_texturesName.empty())
+	{
+		std::cout << "texturesName is empty......" << std::endl;
+		return;
+	}
+	__crt_va_start(arg, texturesCount);
+	for (int i = 0; i < texturesCount; i++)
+	{
+		const char *texturePath = __crt_va_arg(arg, char *);
+		Texture *texture = new Texture();
+		assert(texture->load(engine.getAssetPathByName(texturePath), true));
+		m_textures.push_back(texture);
 	}
 	__crt_va_end(arg);
 }
@@ -145,25 +165,9 @@ void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<T
 	}
 }
 
-void Shader::renderTextures(unsigned int loadTextureCount, ...)
+void Shader::renderTextures()
 {
-	Engine &engine = Engine::get_singleton();
-	va_list arg;
-	auto textureNames = getTextureNames();
-	if (textureNames.empty())
-	{
-		std::cout << "textureNames is empty......" << std::endl;
-		return;
-	}
-	__crt_va_start(arg, loadTextureCount);
-	for (int i = 0; i < loadTextureCount; i++)
-	{
-		const char *texturePath = __crt_va_arg(arg, char *);
-		Texture *texture = new Texture();
-		texture->setUniformName(textureNames[i]);
-		assert(texture->load(engine.getAssetPathByName(texturePath), true));
-	}
-	__crt_va_end(arg);
+	renderTextures(m_texturesName, m_textures);
 }
 
 void Shader::setBool(const std::string &name, bool value) const
