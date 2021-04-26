@@ -3,7 +3,6 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <cassert>
 #include "math.h"
 #include "xpack/json.h"
 
@@ -37,11 +36,23 @@ public:
 
     void initJson(std::vector<std::string> files);
 
-	template<typename T> void getJsonData(T &t, std::string jsonName)
+    template <typename T>
+    void getJsonData(T &t, std::string jsonName)
     {
-        std::string assetPath = m_json_paths.at(jsonName);
-        xpack::json::decode(getStringFromFile(assetPath), t);
-	}
+        static std::map<std::string, T> m_json_datas;
+        typename std::map<std::string, T>::iterator it;
+        it = m_json_datas.find(jsonName);
+        if (it != m_json_datas.end())
+        {
+            t = it->second;
+        }
+        else
+        {
+            std::string assetPath = m_json_paths.at(jsonName);
+            xpack::json::decode(getStringFromFile(assetPath), t);
+            m_json_datas.insert(std::pair<std::string, T>(jsonName, t));
+        }
+    }
 
 private:
     JsonLoad(){};
