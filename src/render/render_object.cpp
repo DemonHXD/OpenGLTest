@@ -16,9 +16,7 @@
 
 RenderObject::RenderObject()
 {
-	m_dirLight_data = JsonLoad::getInstance()->getDirLightData();
-	m_pointLights_data = JsonLoad::getInstance()->getPointLightsData();
-	m_spotLightData_data = JsonLoad::getInstance()->getSpotLightData();
+	JsonLoad::getInstance()->getJsonData(m_model_light_data, "model_light");
 }
 
 void RenderObject::setRenderObject(const std::string vaoName, const VertexFormat &vertex_format, const void *vertex_data, size_t vertex_count, const unsigned int *indices, size_t index_count)
@@ -183,7 +181,8 @@ void RenderObject::renderCube()
 	float timeValue = glfwGetTime();
 	float changeValueSin = sin(timeValue) / 0.6f + 1.2f;
 	float changeValueCos = cos(timeValue) / 0.6f;
-	model = glm::translate(model, Vector3(changeValueSin,  1.6f, changeValueCos));
+	m_lightPos = Vector3(changeValueSin, 1.6f, changeValueCos);
+	model = glm::translate(model, m_lightPos);
 	model = glm::scale(model, glm::vec3(0.2f));
 	lightCubeShader->setMat4("model", model);
 	glBindVertexArray(lightCubeVAO);
@@ -200,9 +199,23 @@ void RenderObject::renderModel()
 	ModelManager &modelManager = ModelManager::get_singleton();
 
 	Shader *ourShader = shaderManager.getShaders().at("ourShader");
+
 	for (unsigned int i = 0; i < m_meshVertexs.size(); i++)
 	{
 		ourShader->bind();
+		ourShader->setVec3("light.position", m_lightPos);
+        ourShader->setVec3("viewPos", camera->getPosition());
+
+        // light properties
+        ourShader->setVec3("light.ambient", m_model_light_data.ambient);
+        ourShader->setVec3("light.diffuse", m_model_light_data.diffuse);
+        ourShader->setVec3("light.specular", m_model_light_data.specular);
+        ourShader->setFloat("light.constant", m_model_light_data.constant);
+        ourShader->setFloat("light.linear", m_model_light_data.linear);
+        ourShader->setFloat("light.quadratic", m_model_light_data.quadratic);
+
+        // material properties
+        ourShader->setFloat("material.shininess", 32.0f);
 		ourShader->renderTextures(m_meshVertexs[i].texturesName, m_meshVertexs[i].textures);
 
 		// view/projection transformations
@@ -230,6 +243,6 @@ void RenderObject::renderModel()
 
 void RenderObject::render()
 {
-	renderCube();
+	 renderCube();
 	renderModel();
 }

@@ -63,9 +63,10 @@ private:
 	std::vector<Vector3> m_point_light_positions;
 	int m_position_index;
 
-	JsonLoad::DirLightData m_dirLight_data;
-	JsonLoad::PointLightsData m_pointLights_data;
-	JsonLoad::PointLightsData m_spotLightData_data;
+	// JsonLoad::DirLightData m_dirLight_data;
+	// JsonLoad::PointLightsData m_pointLights_data;
+	// JsonLoad::PointLightsData m_spotLightData_data;
+	JsonLoad::PointLightsData m_model_light_data;
 
 	std::vector<Model::MeshVertex> m_meshVertexs;
 	std::vector<std::vector<std::string>> m_model_texturesName;
