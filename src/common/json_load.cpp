@@ -51,36 +51,3 @@ std::string JsonLoad::getStringFromFile(std::string jsonFilePath)
     }
     return jsonCode;
 }
-
-JsonLoad::DirLightData JsonLoad::getDirLightData()
-{
-    if (!m_dirLight_data.isInit)
-    {
-        std::string assetPath = m_json_paths.at("dirLight");
-        xpack::json::decode(getStringFromFile(assetPath), m_dirLight_data);
-        m_dirLight_data.isInit = true;
-    }
-    return m_dirLight_data;
-}
-
-JsonLoad::PointLightsData JsonLoad::getPointLightsData()
-{
-    if (!m_pointLights_data.isInit)
-    {
-        std::string assetPath = m_json_paths.at("pointLights");
-        xpack::json::decode(getStringFromFile(assetPath), m_pointLights_data);
-        m_pointLights_data.isInit = true;
-    }
-    return m_pointLights_data;
-}
-
-JsonLoad::PointLightsData JsonLoad::getSpotLightData()
-{
-    if (!m_spotLight_data.isInit)
-    {
-        std::string assetPath = m_json_paths.at("spotLight");
-        xpack::json::decode(getStringFromFile(assetPath), m_spotLight_data);
-        m_spotLight_data.isInit = true;
-    }
-    return m_spotLight_data;
-}
