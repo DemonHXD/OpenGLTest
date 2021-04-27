@@ -4,7 +4,6 @@ project(OpenGLTest)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmakes")
 include(Common)
 
-set(CMAKE_SUPPRESS_REGENERATION FALSE)
 if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Sets the configuration to build (Debug, Release, etc...)")
 endif()
@@ -138,50 +137,20 @@ endif ()
 
 include_directories(
     ${CMAKE_SOURCE_DIR}/dev/include
+    ${CMAKE_SOURCE_DIR}/dev/include/xpack
 )
 
 link_directories(
     ${CMAKE_SOURCE_DIR}/dev/lib
 )
 
-SET( COMMON
-    dev/include/glad.c
-    dev/include/stb_image.h
-    src/common/json_load.cpp
-    src/common/json_load.h
-    src/common/lib_utils.cpp
-    src/common/lib_utils.h
-    src/common/math.h
-    src/common/singleton.h
-)
+file(GLOB_RECURSE COMMON src/common/**)
+file(GLOB_RECURSE ENGINE src/engine/**)
+file(GLOB_RECURSE RENDER src/render/**)
 
-SET( ENGINE
-    src/engine/camera.cpp
-    src/engine/camera.h
-    src/engine/engine.cpp
-    src/engine/engine.h
-)
-
-SET( RENDER
-    src/render/model.cpp
-    src/render/model.h
-    src/render/model_manager.cpp
-    src/render/model_manager.h
-    src/render/render.cpp
-    src/render/render.h
-    src/render/render_object.cpp
-    src/render/render_object.h
-    src/render/shader.cpp
-    src/render/shader.h
-    src/render/shader_manager.cpp
-    src/render/shader_manager.h
-    src/render/texture.cpp
-    src/render/texture.h
-)
-
-SOURCE_GROUP( OpenGLTest\\Common        FILES  ${COMMON} )
-SOURCE_GROUP( OpenGLTest\\Engine        FILES  ${ENGINE} )
-SOURCE_GROUP( OpenGLTest\\Render        FILES  ${RENDER} )
+SOURCE_GROUP( OpenGLTest\\Common FILES ${COMMON} )
+SOURCE_GROUP( OpenGLTest\\Engine FILES ${ENGINE} )
+SOURCE_GROUP( OpenGLTest\\Render FILES ${RENDER} )
 
 add_executable( OpenGLTest
     ${COMMON}
