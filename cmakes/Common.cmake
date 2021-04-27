@@ -1,0 +1,15 @@
+
+macro(GROUP_FILES files)
+    set(SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+    foreach(file_path ${${files}})
+        string(REGEX REPLACE ${SOURCE_DIR}/\(.*\) \\1 relative_path ${file_path})
+        string(REGEX REPLACE "\(.*\)/.*" \\1 group_name ${relative_path})
+        string(REPLACE "/" "\\" group_name ${group_name})
+        if(${group_name} STREQUAL ${relative_path})
+            source_group("" FILES ${file_path})
+        else()
+            source_group(${group_name} FILES ${file_path})
+        endif()			
+    endforeach()
+endmacro(GROUP_FILES)
+

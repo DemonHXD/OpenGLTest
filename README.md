@@ -1,5 +1,12 @@
 # OpenGLTest
 
+## 项目编译运行说明
+1. 使用cmake编译项目
+2. 生成解决方案
+3. 设置OpenGLTest为启动项
+4. 把dev文件夹下的assimpd.dll文件移动至build/bin文件夹下
+5. 运行项目
+
 ## 作业完成情况
 
 ### 配置OpenGL开发环境及运行    完成
