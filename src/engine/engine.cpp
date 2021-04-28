@@ -9,12 +9,12 @@
 #include "../render/render.h"
 #include "../common/json_load.h"
 #include <assert.h>
-#include <io.h> 
+#include <io.h>
 
 #include <iomanip>
 #include <direct.h>
 
-Engine* Singleton<Engine>::singleton = nullptr;
+Engine *Singleton<Engine>::singleton = nullptr;
 
 Engine::Engine()
 {
@@ -28,31 +28,31 @@ void Engine::initEngine()
 	JsonLoad::getInstance()->initJson(getFilesBySuffix(".json"));
 }
 
-void Engine::getFiles(std::string path, std::vector<std::string>& files)
+void Engine::getFiles(std::string path, std::vector<std::string> &files)
 {
-    //文件句柄
-    long   hFile   =   0;
-    //文件信息
-    struct _finddata_t fileinfo;
-    std::string p;
-    if((hFile = _findfirst(p.assign(path).append("\\*").c_str(),&fileinfo)) !=  -1)
-    {
-        do
-        {
-            //如果是目录,迭代之
-            //如果不是,加入列表
-            if((fileinfo.attrib &  _A_SUBDIR))
-            {
-                if(strcmp(fileinfo.name,".") != 0  &&  strcmp(fileinfo.name,"..") != 0)
-                    getFiles( p.assign(path).append("\\").append(fileinfo.name), files );
-            }
-            else
-            {
-                files.push_back(p.assign(path).append("\\").append(fileinfo.name) );
-            }
-        }while(_findnext(hFile, &fileinfo)  == 0);
-        _findclose(hFile);
-    }
+	//文件句柄
+	long hFile = 0;
+	//文件信息
+	struct _finddata_t fileinfo;
+	std::string p;
+	if ((hFile = _findfirst(p.assign(path).append("\\*").c_str(), &fileinfo)) != -1)
+	{
+		do
+		{
+			//如果是目录,迭代之
+			//如果不是,加入列表
+			if ((fileinfo.attrib & _A_SUBDIR))
+			{
+				if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0)
+					getFiles(p.assign(path).append("\\").append(fileinfo.name), files);
+			}
+			else
+			{
+				files.push_back(p.assign(path).append("\\").append(fileinfo.name));
+			}
+		} while (_findnext(hFile, &fileinfo) == 0);
+		_findclose(hFile);
+	}
 }
 
 void Engine::preLoadAllAsset()
@@ -63,7 +63,7 @@ void Engine::preLoadAllAsset()
 	getFiles(assetPath, files);
 
 	int size = files.size();
-	for (int i = 0;i < size;i++)
+	for (int i = 0; i < size; i++)
 	{
 		std::string assetPath = files[i];
 		int idx = assetPath.rfind('\\');
@@ -100,25 +100,26 @@ std::string Engine::getEnginePath() const
 */
 std::vector<std::string> Engine::getFilesBySuffix(std::string suffixName)
 {
-    std::vector<std::string> files;
+	std::vector<std::string> files;
 
 	std::string assetPath = getEnginePath() + std::string("asset");
-    //获取该路径下的所有文件
-    getFiles(assetPath, files);
-    auto iter = files.begin();
-    while(iter != files.end())
-    {
-        std::string assetPath = *iter;
-        int result = assetPath.find(suffixName);
-        if (result == -1)
-        {
-            iter = files.erase(iter);
-        }
-        else{
-            iter++;
-        }
-    }
-    return files;
+	//获取该路径下的所有文件
+	getFiles(assetPath, files);
+	auto iter = files.begin();
+	while (iter != files.end())
+	{
+		std::string assetPath = *iter;
+		int result = assetPath.find(suffixName);
+		if (result == -1)
+		{
+			iter = files.erase(iter);
+		}
+		else
+		{
+			iter++;
+		}
+	}
+	return files;
 }
 
 bool Engine::initWindow(unsigned int width, unsigned int height)
@@ -132,7 +133,8 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 
 	// 创建窗口 设置窗口的宽高以及标题
 	m_window = glfwCreateWindow(width, height, "LearnOpenGL", NULL, NULL);
-	if (m_window == NULL) {
+	if (m_window == NULL)
+	{
 		std::cout << "Faild to create GLFW window" << std::endl;
 		glfwTerminate();
 		return false;
@@ -146,7 +148,8 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 	glfwMakeContextCurrent(m_window);
 
 	// 初始化glad
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return false;
 	}
@@ -160,19 +163,22 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 	glfwSetScrollCallback(m_window, mouse_scroll_callback);
 
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	stbi_set_flip_vertically_on_load(false);
+
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS); // always pass the depth test (same effect as glDisable(GL_DEPTH_TEST))
-
+	glEnable(GL_STENCIL_TEST);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
 	return true;
 }
 
 void Engine::run()
 {
-	Render& render = Render::get_singleton();
-		// 渲染循环
-	while (!glfwWindowShouldClose(m_window)) {
+	Render &render = Render::get_singleton();
+	// 渲染循环
+	while (!glfwWindowShouldClose(m_window))
+	{
 
 		const float currentFrame = glfwGetTime();
 		const float deltaTime = currentFrame - m_lastFrame;
@@ -198,36 +204,42 @@ float Engine::get_time() const
 	return glfwGetTime();
 }
 
-
-void Engine::keyProcessInput(float deltaTime) {
-	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+void Engine::keyProcessInput(float deltaTime)
+{
+	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
 		glfwSetWindowShouldClose(m_window, true);
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS) {
+	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+	{
 		m_camera->ProcessKeyboard(FORWARD, deltaTime);
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS) {
+	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+	{
 		m_camera->ProcessKeyboard(BACKWARD, deltaTime);
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS) {
+	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+	{
 		m_camera->ProcessKeyboard(LEFT, deltaTime);
 	}
-	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS) {
+	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+	{
 		m_camera->ProcessKeyboard(RIGHT, deltaTime);
 	}
 }
 
-void Engine::framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-	
+void Engine::framebuffer_size_callback(GLFWwindow *window, int width, int height)
+{
+
 	Engine::get_singleton().on_framebuffer_size_callback(width, height);
 }
 
-void Engine::mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
+void Engine::mouse_move_callback(GLFWwindow *window, double xpos, double ypos)
 {
 	Engine::get_singleton().on_move_callback(xpos, ypos);
 }
 
-void Engine::mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void Engine::mouse_scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
 	Engine::get_singleton().on_scroll_callback(yoffset);
 }

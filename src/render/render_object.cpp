@@ -168,15 +168,32 @@ void RenderObject::renderCube()
 	Camera *camera = engine.getCamera();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
 	Shader *shader = shaderManager.getShaders().at("shader");
+	Shader *shaderSingleColor = shaderManager.getShaders().at("shaderSingleColor");
 	unsigned int boxCubeVAO = m_vaos.at("boxCubeVAO");
 	unsigned int planeVAO = m_vaos.at("planeVAO");
 
-	shader->bind();
+	// set uniforms
+	shaderSingleColor->bind();
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 view = camera->GetViewMatrix();
 	glm::mat4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
+	shaderSingleColor->setMat4("view", view);
+	shaderSingleColor->setMat4("projection", projection);
+
+	shader->bind();
 	shader->setMat4("view", view);
 	shader->setMat4("projection", projection);
+
+	glStencilMask(0x00);
+	// floor
+	glBindVertexArray(planeVAO);
+	shader->renderTexture("metal.png", "texture1");
+	shader->setMat4("model", glm::mat4(1.0f));
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glStencilFunc(GL_ALWAYS, 1, 0xFF);
+	glStencilMask(0xFF);
 	// cubes
 	glBindVertexArray(boxCubeVAO);
 	shader->renderTexture("marble.jpg", "texture1");
@@ -188,12 +205,28 @@ void RenderObject::renderCube()
 	shader->setMat4("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	// floor
-	glBindVertexArray(planeVAO);
-	shader->renderTexture("metal.png", "texture1");
-	shader->setMat4("model", glm::mat4(1.0f));
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+	glStencilMask(0x00);
+	glDisable(GL_DEPTH_TEST);
+	shaderSingleColor->bind();
+	float scale = 1.1;
+	// cubes
+	glBindVertexArray(boxCubeVAO);
+	shader->renderTexture("marble.jpg", "texture1");
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+	model = glm::scale(model, glm::vec3(scale, scale, scale));
+	shaderSingleColor->setMat4("model", model);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(scale, scale, scale));
+	shaderSingleColor->setMat4("model", model);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
+	glStencilMask(0xFF);
+	glStencilFunc(GL_ALWAYS, 0, 0xFF);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void RenderObject::renderModel()
