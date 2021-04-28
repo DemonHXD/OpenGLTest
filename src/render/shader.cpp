@@ -140,10 +140,11 @@ void Shader::setTextures(unsigned int texturesCount, ...)
 	__crt_va_start(arg, texturesCount);
 	for (int i = 0; i < texturesCount; i++)
 	{
-		const char *texturePath = __crt_va_arg(arg, char *);
+		const char *textureName = __crt_va_arg(arg, char *);
 		Texture *texture = new Texture();
-		assert(texture->load(engine.getAssetPathByName(texturePath), true));
+		assert(texture->load(engine.getAssetPathByName(textureName), true));
 		m_textures.push_back(texture);
+		m_map_texture.insert(std::pair<std::string, Texture *>(textureName, texture));
 	}
 	__crt_va_end(arg);
 }
@@ -168,6 +169,14 @@ void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<T
 void Shader::renderTextures()
 {
 	renderTextures(m_texturesName, m_textures);
+}
+
+void Shader::renderTexture(std::string textureName, std::string uniformName)
+{
+	Texture *texture = m_map_texture.at(textureName);
+	glActiveTexture(GL_TEXTURE0);
+	setInt(uniformName, 0);
+	texture->active();
 }
 
 void Shader::setBool(const std::string &name, bool value) const

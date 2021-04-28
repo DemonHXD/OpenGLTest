@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "texture.h"
 #include "../common/math.h"
 
@@ -22,6 +23,7 @@ public:
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
 	void renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures);
 	void renderTextures();
+	void renderTexture(std::string textureName, std::string uniformName);
 	void bind() const;
 	void unbind() const;
 
@@ -55,6 +57,7 @@ private:
 	unsigned int m_shaderID;
 	std::vector<std::string> m_texturesName;
 	std::vector<Texture*> m_textures;
+	std::map<std::string, Texture*> m_map_texture;
 };
 #endif // !_SHADER_H_
 
