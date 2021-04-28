@@ -167,82 +167,41 @@ void RenderObject::renderCube()
 	Engine &engine = Engine::get_singleton();
 	Camera *camera = engine.getCamera();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
-	Shader *lightCubeShader = shaderManager.getShaders().at("lightCubeShader");
-	unsigned int lightCubeVAO = m_vaos.at("lightCubeVAO");
+	Shader *shader = shaderManager.getShaders().at("shader");
+	unsigned int boxCubeVAO = m_vaos.at("boxCubeVAO");
+	unsigned int planeVAO = m_vaos.at("planeVAO");
 
-	Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
-	Matrix4 view = camera->GetViewMatrix();
-	Matrix4 model = Matrix4(1.0f);
-
-	lightCubeShader->bind();
-	lightCubeShader->setMat4("projection", projection);
-	lightCubeShader->setMat4("view", view);
+	shader->bind();
+	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 view = camera->GetViewMatrix();
+	glm::mat4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
+	shader->setMat4("view", view);
+	shader->setMat4("projection", projection);
+	// cubes
+	glBindVertexArray(boxCubeVAO);
+	shader->renderTexture("marble.jpg", "texture1");
+	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
+	shader->setMat4("model", model);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
 	model = glm::mat4(1.0f);
-	float timeValue = glfwGetTime();
-	float changeValueSin = sin(timeValue) / 0.6f + 1.2f;
-	float changeValueCos = cos(timeValue) / 0.6f;
-	m_lightPos = Vector3(changeValueSin, 1.6f, changeValueCos);
-	model = glm::translate(model, m_lightPos);
-	model = glm::scale(model, glm::vec3(0.2f));
-	lightCubeShader->setMat4("model", model);
-	glBindVertexArray(lightCubeVAO);
+	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
+	shader->setMat4("model", model);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
-	lightCubeShader->unbind();
+	// floor
+	glBindVertexArray(planeVAO);
+	shader->renderTexture("metal.png", "texture1");
+	shader->setMat4("model", glm::mat4(1.0f));
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
 }
 
 void RenderObject::renderModel()
 {
-	Engine &engine = Engine::get_singleton();
-	Camera *camera = engine.getCamera();
-	ShaderManager &shaderManager = ShaderManager::get_singleton();
-	ModelManager &modelManager = ModelManager::get_singleton();
-
-	Shader *ourShader = shaderManager.getShaders().at("ourShader");
-
-	for (unsigned int i = 0; i < m_meshVertexs.size(); i++)
-	{
-		ourShader->bind();
-		ourShader->setVec3("light.position", m_lightPos);
-        ourShader->setVec3("viewPos", camera->getPosition());
-
-        // light properties
-        ourShader->setVec3("light.ambient", m_model_light_data.ambient);
-        ourShader->setVec3("light.diffuse", m_model_light_data.diffuse);
-        ourShader->setVec3("light.specular", m_model_light_data.specular);
-        ourShader->setFloat("light.constant", m_model_light_data.constant);
-        ourShader->setFloat("light.linear", m_model_light_data.linear);
-        ourShader->setFloat("light.quadratic", m_model_light_data.quadratic);
-
-        // material properties
-        ourShader->setFloat("material.shininess", 32.0f);
-		ourShader->renderTextures(m_meshVertexs[i].texturesName, m_meshVertexs[i].textures);
-
-		// view/projection transformations
-		Matrix4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
-		Matrix4 view = camera->GetViewMatrix();
-		ourShader->setMat4("projection", projection);
-		ourShader->setMat4("view", view);
-
-		// render the loaded model
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, Vector3(1.2f, -1.2f, 0.0f)); // translate it down so it's at the center of the scene
-		model = glm::scale(model, Vector3(0.3f, 0.3f, 0.3f));	   // it's a bit too big for our scene, so scale it down
-		ourShader->setMat4("model", model);
-
-		std::string vaoName = "model_vao_" + std::to_string(i);
-		glBindVertexArray(m_model_vaos.at(vaoName));
-
-		glDrawElements(GL_TRIANGLES, m_meshVertexs[i].indices.size(), GL_UNSIGNED_INT, 0);
-
-		ourShader->unbind();
-		glBindVertexArray(0);
-		glActiveTexture(GL_TEXTURE0);
-	}
 }
 
 void RenderObject::render()
 {
-	 renderCube();
-	renderModel();
+	renderCube();
+	// renderModel();
 }

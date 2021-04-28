@@ -162,6 +162,8 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	stbi_set_flip_vertically_on_load(false);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS); // always pass the depth test (same effect as glDisable(GL_DEPTH_TEST))
+
 
 	return true;
 }
