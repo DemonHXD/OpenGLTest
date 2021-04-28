@@ -41,14 +41,15 @@ bool Texture::load(const char *imgPath, bool isGenMipMap)
 		format = GL_RGB;
 	else if (nrChannels == 4)
 		format = GL_RGBA;
-	glTexImage2D(m_type, 0, GL_RGB, width, width, 0, format, GL_UNSIGNED_BYTE, data);
+	glTexImage2D(m_type, 0, format, width, width, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(m_type);
 	stbi_image_free(data);
 
 	if (isGenMipMap)
 	{
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(m_type, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+		glTexParameteri(m_type, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+		glTexParameteri(m_type, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
 		glTexParameteri(m_type, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(m_type, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}

@@ -37,8 +37,8 @@ public:
 
 	Matrix4 get_model_matrix(Vector3 position) const { return glm::translate(glm::mat4(1.0f), position); }
 
-	const std::vector<Vector3> getPositions() const { return m_positions; }
-	void setPosition(unsigned int positionCount, Vector3 positions[]);
+	// const std::vector<Vector3> getPositions() const { return m_positions; }
+	void setUserDataVector3s(std::string vectorName, std::vector<Vector3> vector3s);
 
 	const std::vector<Vector3> getPointLightPositions() const { return m_point_light_positions; }
 	void setPointLightPositions(unsigned int positionCount, Vector3 pointLightPositions[]);
@@ -58,7 +58,8 @@ private:
 
 	Vector3 m_lightPos = Vector3(1.2f, 1.0f, 2.0f);
 
-	std::vector<Vector3> m_positions;
+	// std::vector<Vector3> m_positions;
+	std::map<std::string, std::vector<Vector3>> m_map_userData;
 	std::vector<Vector3> m_point_light_positions;
 	int m_position_index;
 

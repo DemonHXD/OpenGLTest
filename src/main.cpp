@@ -29,17 +29,10 @@ int main()
         return -1;
     }
     shader->setTexturesName(1, "texture1");
-    shader->setTextures(2, "marble.jpg", "metal.png");
-
-    Shader *shaderSingleColor = new Shader();
-    if (!shaderSingleColor->loadShaderAsset("stencil_testing.vs", "stencil_testing.fs"))
-    {
-        return -1;
-    }
+    shader->setTextures(3, "marble.jpg", "metal.png", "blending_transparent_window.png");
 
     std::map<std::string, Shader *> shaderMap;
     shaderMap.insert(std::pair<std::string, Shader *>("shader", shader));
-    shaderMap.insert(std::pair<std::string, Shader *>("shaderSingleColor", shaderSingleColor));
     shaderManager->addLoadShader(shaderMap);
 
     float cubeVertices[] = {
@@ -85,6 +78,7 @@ int main()
         0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
         -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
         -0.5f, 0.5f, -0.5f, 0.0f, 1.0f};
+
     float planeVertices[] = {
         // positions          // texture Coords (note we set these higher than 1 (together with GL_REPEAT as texture wrapping mode). this will cause the floor texture to repeat)
         5.0f, -0.5f, 5.0f, 2.0f, 0.0f,
@@ -95,6 +89,30 @@ int main()
         -5.0f, -0.5f, -5.0f, 0.0f, 2.0f,
         5.0f, -0.5f, -5.0f, 2.0f, 2.0f};
 
+    float transparentVertices[] = {
+        // positions         // texture Coords (swapped y coordinates because texture is flipped upside down)
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+        0.0f, -0.5f, 0.0f, 0.0f, 1.0f,
+        1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+
+        0.0f, 0.5f, 0.0f, 0.0f, 0.0f,
+        1.0f, -0.5f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.5f, 0.0f, 1.0f, 0.0f};
+
+    vector<Vector3> vegetation = {
+        Vector3(-1.5f, 0.0f, -0.48f),
+        Vector3(1.5f, 0.0f, 0.51f),
+        Vector3(0.0f, 0.0f, 0.7f),
+        Vector3(-0.3f, 0.0f, -2.3f),
+        Vector3(0.5f, 0.0f, -0.6f)};
+
+    vector<Vector3> windows = {
+        Vector3(-1.5f, 0.0f, -0.48f),
+        Vector3(1.5f, 0.0f, 0.51f),
+        Vector3(0.0f, 0.0f, 0.7f),
+        Vector3(-0.3f, 0.0f, -2.3f),
+        Vector3(0.5f, 0.0f, -0.6f)};
+
     RenderObject::VertexFormat vf;
     vf.push_back({3, RenderObject::VertexAttr::ElementType::Float, false});
     vf.push_back({2, RenderObject::VertexAttr::ElementType::Float, false});
@@ -102,6 +120,10 @@ int main()
     RenderObject *object = new RenderObject();
     object->setRenderObject("boxCubeVAO", vf, cubeVertices, 36, NULL, 0);
     object->setRenderObject("planeVAO", vf, planeVertices, 6, NULL, 0);
+    object->setRenderObject("transparentVAO", vf, transparentVertices, 6, NULL, 0);
+
+    object->setUserDataVector3s("vegetation", vegetation);
+    object->setUserDataVector3s("windows", windows);
 
     render->addRenderObject(object);
     engine->run();
