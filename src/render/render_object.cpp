@@ -1,15 +1,17 @@
 ﻿#include "glad/glad.h"
-#include "render_object.h"
 #include <cassert>
 #include <GLFW/glfw3.h>
+#include <iostream>
+
+#include "render_object.h"
 #include "texture.h"
 #include "shader.h"
 #include "model.h"
-#include <iostream>
-#include "../engine/engine.h"
-#include "../engine/camera.h"
 #include "shader_manager.h"
 #include "model_manager.h"
+
+#include "../engine/engine.h"
+#include "../engine/camera.h"
 #include "../common/lib_utils.h"
 
 #include <string.h>
@@ -161,8 +163,7 @@ void RenderObject::setPointLightPositions(unsigned int positionCount, Vector3 po
 
 void RenderObject::renderCube()
 {
-	Engine &engine = Engine::get_singleton();
-	Camera *camera = engine.getCamera();
+	Camera *camera = Engine::get_singletonPtr()->getCamera();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
 	Shader *shader = shaderManager.getShaders().at("shader");
 	unsigned int boxCubeVAO = m_vaos.at("boxCubeVAO");

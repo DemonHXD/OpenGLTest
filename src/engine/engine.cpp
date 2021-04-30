@@ -8,8 +8,8 @@
 #include "engine.h"
 #include "camera.h"
 #include "file_system.h"
+#include "input.h"
 
-#include "../common/math.h"
 #include "../render/render.h"
 
 Engine *Singleton<Engine>::singleton = nullptr;
@@ -22,6 +22,8 @@ Engine::Engine()
 void Engine::initEngine()
 {
 	m_camera = new Camera();
+
+	// 初始化文件系统
 	FileSystem::getInstance()->init();
 }
 
@@ -60,10 +62,8 @@ bool Engine::initWindow(unsigned int width, unsigned int height)
 	// 设置渲染窗口(视口)的宽高
 	glViewport(0, 0, width, height);
 
-	// 注册每次调整窗口大小时触发的回调事件
-	glfwSetFramebufferSizeCallback(m_window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(m_window, mouse_move_callback);
-	glfwSetScrollCallback(m_window, mouse_scroll_callback);
+	// 注册输入输出事件
+	m_input->init(m_window, m_camera);
 
 	glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -87,7 +87,7 @@ void Engine::run()
 		const float currentFrame = glfwGetTime();
 		const float deltaTime = currentFrame - m_lastFrame;
 		m_lastFrame = currentFrame;
-		keyProcessInput(deltaTime);
+		m_input->keyProcessInput(deltaTime);
 
 		render.draw(deltaTime);
 
@@ -106,71 +106,4 @@ void Engine::stopRun()
 float Engine::get_time() const
 {
 	return glfwGetTime();
-}
-
-void Engine::keyProcessInput(float deltaTime)
-{
-	if (glfwGetKey(m_window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-	{
-		glfwSetWindowShouldClose(m_window, true);
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-	{
-		m_camera->ProcessKeyboard(FORWARD, deltaTime);
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-	{
-		m_camera->ProcessKeyboard(BACKWARD, deltaTime);
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-	{
-		m_camera->ProcessKeyboard(LEFT, deltaTime);
-	}
-	if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-	{
-		m_camera->ProcessKeyboard(RIGHT, deltaTime);
-	}
-}
-
-void Engine::framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-
-	Engine::get_singleton().on_framebuffer_size_callback(width, height);
-}
-
-void Engine::mouse_move_callback(GLFWwindow *window, double xpos, double ypos)
-{
-	Engine::get_singleton().on_move_callback(xpos, ypos);
-}
-
-void Engine::mouse_scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
-{
-	Engine::get_singleton().on_scroll_callback(yoffset);
-}
-
-void Engine::on_framebuffer_size_callback(int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
-
-void Engine::on_move_callback(double xpos, double ypos)
-{
-	if (m_firstMouse)
-	{
-		m_lastX = xpos;
-		m_lastY = ypos;
-		m_firstMouse = false;
-	}
-
-	float xoffset = xpos - m_lastX;
-	float yoffset = m_lastY - ypos; // reversed since y-coordinates go from bottom to top
-	m_lastX = xpos;
-	m_lastY = ypos;
-
-	m_camera->ProcessMouseMovement(xoffset, yoffset, true);
-}
-
-void Engine::on_scroll_callback(double yoffset)
-{
-	m_camera->ProcessMouseScroll(yoffset);
 }
