@@ -1,18 +1,16 @@
 ﻿#define STB_IMAGE_IMPLEMENTATION
 #include <glad/glad.h>
-#include "Engine.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "camera.h"
 #include <stb_image.h>
+#include <assert.h>
+
+#include "engine.h"
+#include "camera.h"
+#include "file_system.h"
+
 #include "../common/math.h"
 #include "../render/render.h"
-#include "../common/json_load.h"
-#include <assert.h>
-#include <io.h>
-
-#include <iomanip>
-#include <direct.h>
 
 Engine *Singleton<Engine>::singleton = nullptr;
 
@@ -24,102 +22,7 @@ Engine::Engine()
 void Engine::initEngine()
 {
 	m_camera = new Camera();
-	preLoadAllAsset();
-	JsonLoad::getInstance()->initJson(getFilesBySuffix(".json"));
-}
-
-void Engine::getFiles(std::string path, std::vector<std::string> &files)
-{
-	//文件句柄
-	long hFile = 0;
-	//文件信息
-	struct _finddata_t fileinfo;
-	std::string p;
-	if ((hFile = _findfirst(p.assign(path).append("\\*").c_str(), &fileinfo)) != -1)
-	{
-		do
-		{
-			//如果是目录,迭代之
-			//如果不是,加入列表
-			if ((fileinfo.attrib & _A_SUBDIR))
-			{
-				if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0)
-					getFiles(p.assign(path).append("\\").append(fileinfo.name), files);
-			}
-			else
-			{
-				files.push_back(p.assign(path).append("\\").append(fileinfo.name));
-			}
-		} while (_findnext(hFile, &fileinfo) == 0);
-		_findclose(hFile);
-	}
-}
-
-void Engine::preLoadAllAsset()
-{
-	std::vector<std::string> files;
-	std::string assetPath = getEnginePath() + std::string("asset");
-	//获取该路径下的所有文件
-	getFiles(assetPath, files);
-
-	int size = files.size();
-	for (int i = 0; i < size; i++)
-	{
-		std::string assetPath = files[i];
-		int idx = assetPath.rfind('\\');
-		std::string assetName = assetPath.substr(idx + 1, assetPath.size());
-		m_assets.insert(std::pair<std::string, std::string>(assetName, assetPath));
-	}
-}
-
-/*
-	获取引擎所在目录
-*/
-std::string Engine::getEnginePath() const
-{
-	int index = 0;
-	char buffer[_MAX_PATH];
-	_getcwd(buffer, _MAX_PATH);
-	while (buffer[index] != '\0')
-	{
-		index++;
-	}
-	for (; index >= 0; index--)
-	{
-		if (buffer[index] == '\\')
-		{
-			break;
-		}
-		buffer[index] = '\0';
-	}
-	return buffer;
-}
-
-/*
-    通过后缀名获取所有资源
-*/
-std::vector<std::string> Engine::getFilesBySuffix(std::string suffixName)
-{
-	std::vector<std::string> files;
-
-	std::string assetPath = getEnginePath() + std::string("asset");
-	//获取该路径下的所有文件
-	getFiles(assetPath, files);
-	auto iter = files.begin();
-	while (iter != files.end())
-	{
-		std::string assetPath = *iter;
-		int result = assetPath.find(suffixName);
-		if (result == -1)
-		{
-			iter = files.erase(iter);
-		}
-		else
-		{
-			iter++;
-		}
-	}
-	return files;
+	FileSystem::getInstance()->init();
 }
 
 bool Engine::initWindow(unsigned int width, unsigned int height)

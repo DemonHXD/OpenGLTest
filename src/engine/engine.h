@@ -48,18 +48,8 @@ public:
 		return m_camera;
 	}
 
-	std::string getEnginePath() const;
-	std::vector<std::string> getFilesBySuffix(std::string suffixName);
-
-	const char* getAssetPathByName(std::string assetName) const
-	{
-		return m_assets.at(assetName).c_str();
-	}
-
 private:
 	void initEngine();
-	void preLoadAllAsset();
-	void getFiles(std::string path, std::vector<std::string>& files);
 	void keyProcessInput(float deltaTime);
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
@@ -78,8 +68,6 @@ private:
 	float m_lastY = 600.0 / 2.0;
 	float m_deltaTime = 0.0f; // 当前帧与上一帧的时间差
 	float m_lastFrame = 0.0f; // 上一帧的时间
-
-	std::map<std::string, std::string> m_assets;
 };
 #endif // !_ENGINE_H
 

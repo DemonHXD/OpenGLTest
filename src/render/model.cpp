@@ -7,12 +7,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
 #include <GLFW/glfw3.h>
-#include "../engine/engine.h"
+#include "../engine/file_system.h"
 
 bool Model::loadModelAsset(const std::string &AssetName)
 {
-    Engine &engine = Engine::get_singleton();
-    std::string modelPath = engine.getAssetPathByName(AssetName);
+    std::string modelPath = FileSystem::getInstance()->getAssetPathByName(AssetName);
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(modelPath, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -159,10 +158,9 @@ std::vector<Texture*> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType
         }
         if (!skip)
         {
-            Engine& engine = Engine::get_singleton();
             std::string filename = std::string(str.C_Str());
             Texture* texture = new Texture();
-            texture->load(engine.getAssetPathByName(filename), true);
+            texture->load(FileSystem::getInstance()->getAssetPathByName(filename).c_str(), true);
             texture->type = typeName;
             texture->path = str.C_Str();
             textures.push_back(texture);

@@ -4,13 +4,12 @@
 #include <sstream>
 #include <iostream>
 #include "texture.h"
-#include "../engine/engine.h"
+#include "../engine/file_system.h"
 
 bool Shader::loadShaderAsset(const char *vertexAssetName, const char *fragmentAssetName)
 {
-	Engine &engine = Engine::get_singleton();
-	const char *vertexPath = engine.getAssetPathByName(vertexAssetName);
-	const char *fragmentPath = engine.getAssetPathByName(fragmentAssetName);
+	const char *vertexPath = FileSystem::getInstance()->getAssetPathByName(vertexAssetName).c_str();
+	const char *fragmentPath = FileSystem::getInstance()->getAssetPathByName(fragmentAssetName).c_str();
 	// 1.从文件路径中获取顶点/片段着色器
 	std::string vertexCode;
 	std::string fragmentCode;
@@ -130,7 +129,6 @@ void Shader::setTexturesName(unsigned int textureNameCount, ...)
 
 void Shader::setTextures(unsigned int texturesCount, ...)
 {
-	Engine &engine = Engine::get_singleton();
 	va_list arg;
 	if (m_texturesName.empty())
 	{
@@ -142,7 +140,7 @@ void Shader::setTextures(unsigned int texturesCount, ...)
 	{
 		const char *textureName = __crt_va_arg(arg, char *);
 		Texture *texture = new Texture();
-		assert(texture->load(engine.getAssetPathByName(textureName), true));
+		assert(texture->load(FileSystem::getInstance()->getAssetPathByName(textureName).c_str(), true));
 		m_textures.push_back(texture);
 		m_map_texture.insert(std::pair<std::string, Texture *>(textureName, texture));
 	}
