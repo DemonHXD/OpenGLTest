@@ -177,11 +177,11 @@ void RenderObject::renderCube()
 	shader->setMat4("model", model);
 	shader->setMat4("view", view);
 	shader->setMat4("projection", projection);
+	shader->setVec3("cameraPos", camera->getPosition());
 	// cubes
 	glBindVertexArray(cubeVAO);
 	shader->renderTexture(GL_TEXTURE_2D, "container2.png", "texture1");
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	// glBindVertexArray(0);
 
 	// draw skybox as last
 	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
@@ -192,8 +192,6 @@ void RenderObject::renderCube()
 	// skybox cube
 	glBindVertexArray(skyboxVAO);
 	skyboxShader->renderTexture(GL_TEXTURE_CUBE_MAP, "skyboxTextures", "cubemapTexture");
-	// glActiveTexture(GL_TEXTURE0);
-	// glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS); // set depth function back to default
