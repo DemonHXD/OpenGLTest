@@ -21,9 +21,9 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
-	void renderTextures(std::vector<std::string> texturesName, std::vector<Texture*> textures);
-	void renderTextures();
-	void renderTexture(std::string textureName, std::string uniformName);
+	void renderTextures(unsigned int renderTextureType, std::vector<std::string> texturesName, std::vector<Texture*> textures);
+	void renderTextures(unsigned int renderTextureType);
+	void renderTexture(unsigned int renderTextureType, std::string textureName, std::string uniformName);
 	void bind() const;
 	void unbind() const;
 
@@ -34,6 +34,7 @@ public:
 
 	void setTexturesName(unsigned int textureNameCount, ...);
 	void setTextures(unsigned int texturesCount, ...);
+	void setMapTextures(std::string mapTexturesName, unsigned int texturesCount, ...);
 
 	void setBool(const std::string &name, bool value) const;
 	void setInt(const std::string &name, int value) const;

@@ -139,15 +139,37 @@ void Shader::setTextures(unsigned int texturesCount, ...)
 	for (int i = 0; i < texturesCount; i++)
 	{
 		const char *textureName = __crt_va_arg(arg, char *);
-		Texture *texture = new Texture();
-		assert(texture->load(FileSystem::getInstance()->getAssetPathByName(textureName).c_str(), true));
-		m_textures.push_back(texture);
-		m_map_texture.insert(std::pair<std::string, Texture *>(textureName, texture));
+		Texture *singlnTexture = new Texture();
+		assert(singlnTexture->load(FileSystem::getInstance()->getAssetPathByName(textureName).c_str(), true));
+		m_textures.push_back(singlnTexture);
+		m_map_texture.insert(std::pair<std::string, Texture *>(textureName, singlnTexture));
 	}
 	__crt_va_end(arg);
 }
 
-void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<Texture *> textures)
+void Shader::setMapTextures(std::string mapTexturesName, unsigned int texturesCount, ...)
+{
+	va_list arg;
+	std::vector<std::string> textureNames;
+	if (m_texturesName.empty())
+	{
+		std::cout << "texturesName is empty......" << std::endl;
+		return;
+	}
+	Texture *mapTexture = new Texture();
+	__crt_va_start(arg, texturesCount);
+	for (int i = 0; i < texturesCount; i++)
+	{
+		const char *textureName = __crt_va_arg(arg, char *);
+		textureNames.push_back(FileSystem::getInstance()->getAssetPathByName(textureName).c_str());
+	}
+	assert(mapTexture->loadCubeMap(textureNames));
+	m_textures.push_back(mapTexture);
+	m_map_texture.insert(std::pair<std::string, Texture *>(mapTexturesName, mapTexture));
+	__crt_va_end(arg);
+}
+
+void Shader::renderTextures(unsigned int renderTextureType, std::vector<std::string> texturesName, std::vector<Texture *> textures)
 {
 	if (textures.empty())
 	{
@@ -160,21 +182,21 @@ void Shader::renderTextures(std::vector<std::string> texturesName, std::vector<T
 		std::string uniformName = texturesName[index];
 		glActiveTexture(GL_TEXTURE0 + index);
 		setInt(uniformName, index);
-		textures[index]->active();
+		textures[index]->active(renderTextureType);
 	}
 }
 
-void Shader::renderTextures()
+void Shader::renderTextures(unsigned int renderTextureType)
 {
-	renderTextures(m_texturesName, m_textures);
+	renderTextures(renderTextureType, m_texturesName, m_textures);
 }
 
-void Shader::renderTexture(std::string textureName, std::string uniformName)
+void Shader::renderTexture(unsigned int renderTextureType, std::string textureName, std::string uniformName)
 {
 	Texture *texture = m_map_texture.at(textureName);
 	glActiveTexture(GL_TEXTURE0);
 	setInt(uniformName, 0);
-	texture->active();
+	texture->active(renderTextureType);
 }
 
 void Shader::setBool(const std::string &name, bool value) const

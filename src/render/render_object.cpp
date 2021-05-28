@@ -166,53 +166,37 @@ void RenderObject::renderCube()
 	Camera *camera = Engine::get_singletonPtr()->getCamera();
 	ShaderManager &shaderManager = ShaderManager::get_singleton();
 	Shader *shader = shaderManager.getShaders().at("shader");
-	unsigned int boxCubeVAO = m_vaos.at("boxCubeVAO");
-	unsigned int planeVAO = m_vaos.at("planeVAO");
-	unsigned int transparentVAO = m_vaos.at("transparentVAO");
-
-	auto windows = m_map_userData.at("windows");
-	std::map<float, glm::vec3> sorted;
-	for (unsigned int i = 0; i < windows.size(); i++)
-	{
-		float distance = glm::length(camera->getPosition() - windows[i]);
-		sorted[distance] = windows[i];
-	}
+	Shader *skyboxShader = shaderManager.getShaders().at("skyboxShader");
+	unsigned int cubeVAO = m_vaos.at("cubeVAO");
+	unsigned int skyboxVAO = m_vaos.at("skyboxVAO");
 
 	shader->bind();
 	glm::mat4 model = glm::mat4(1.0f);
 	glm::mat4 view = camera->GetViewMatrix();
-	glm::mat4 projection = glm::perspective(glm::radians(camera->getFov()), 800.0f / 600.0f, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(camera->getFov()), (float)800 / (float)600, 0.1f, 100.0f);
+	shader->setMat4("model", model);
 	shader->setMat4("view", view);
 	shader->setMat4("projection", projection);
-
 	// cubes
-	glBindVertexArray(boxCubeVAO);
-	shader->renderTexture("marble.jpg", "texture1");
-	model = glm::translate(model, glm::vec3(-1.0f, 0.0f, -1.0f));
-	shader->setMat4("model", model);
+	glBindVertexArray(cubeVAO);
+	shader->renderTexture(GL_TEXTURE_2D, "container2.png", "texture1");
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(2.0f, 0.0f, 0.0f));
-	shader->setMat4("model", model);
+	// glBindVertexArray(0);
+
+	// draw skybox as last
+	glDepthFunc(GL_LEQUAL);  // change depth function so depth test passes when values are equal to depth buffer's content
+	skyboxShader->bind();
+	view = glm::mat4(glm::mat3(camera->GetViewMatrix())); // remove translation from the view matrix
+	skyboxShader->setMat4("view", view);
+	skyboxShader->setMat4("projection", projection);
+	// skybox cube
+	glBindVertexArray(skyboxVAO);
+	skyboxShader->renderTexture(GL_TEXTURE_CUBE_MAP, "skyboxTextures", "cubemapTexture");
+	// glActiveTexture(GL_TEXTURE0);
+	// glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
-
-	// floor
-	glBindVertexArray(planeVAO);
-	shader->renderTexture("metal.png", "texture1");
-	shader->setMat4("model", glm::mat4(1.0f));
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	// windows (from furthest to nearest)
-	glBindVertexArray(transparentVAO);
-	shader->renderTexture("blending_transparent_window.png", "texture1");
-	for (std::map<float, glm::vec3>::reverse_iterator it = sorted.rbegin(); it != sorted.rend(); ++it)
-	{
-		model = glm::mat4(1.0f);
-		model = glm::translate(model, it->second);
-		shader->setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
 	glBindVertexArray(0);
+	glDepthFunc(GL_LESS); // set depth function back to default
 }
 
 void RenderObject::renderModel()

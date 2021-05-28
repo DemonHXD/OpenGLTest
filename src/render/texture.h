@@ -15,12 +15,13 @@ public:
 	int getHeight() const { return m_height; };
 
 	bool load(const char *imgPath, bool isGenMipMap);
+	bool loadCubeMap(std::vector<std::string> faces);
 
 	std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, std::string typeName);
 
 	void unload();
 
-	void active();
+	void active(unsigned int renderType);
 
 	void bindTextureType(unsigned int textureType);
 
