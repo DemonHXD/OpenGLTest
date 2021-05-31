@@ -8,6 +8,12 @@
 class Texture
 {
 public:
+	struct TextureObject{
+		Texture* texture;
+		std::string texture_uniform_name;
+		unsigned int texture_render_type;
+	};
+public:
 	Texture();
 
 	unsigned int getTextureID() const { return m_id; }

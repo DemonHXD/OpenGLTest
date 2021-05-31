@@ -7,6 +7,7 @@
 #include "texture.h"
 #include "../common/math.h"
 
+class Texture;
 class Shader
 {
 public:
@@ -21,9 +22,6 @@ public:
 	Shader& operator=(Shader&&) = delete;
 
 	bool loadShaderAsset(const char* vertexAssetName, const char* fragmentAssetName);
-	void renderTextures(unsigned int renderTextureType, std::vector<std::string> texturesName, std::vector<Texture*> textures);
-	void renderTextures(unsigned int renderTextureType);
-	void renderTexture(unsigned int renderTextureType, std::string textureName, std::string uniformName);
 	void bind() const;
 	void unbind() const;
 
@@ -31,10 +29,13 @@ public:
 	{
 		return m_shaderID;
 	}
+	
+	void renderAllTextures();
+	void renderTextureByName(std::string uniformName);
 
-	void setTexturesName(unsigned int textureNameCount, ...);
-	void setTextures(unsigned int texturesCount, ...);
-	void setMapTextures(std::string mapTexturesName, unsigned int texturesCount, ...);
+	void setTexture(unsigned int renderTextureType, std::string uniformName, std::string textureName);
+	void setTexture(unsigned int renderTextureType, std::string renderSkyboxName, std::vector<std::string> textureNames);
+	void setTextures(unsigned int renderTextureType, std::vector<std::string> uniformNames, std::vector<std::string> textureNames);
 
 	void setBool(const std::string &name, bool value) const;
 	void setInt(const std::string &name, int value) const;
@@ -46,6 +47,7 @@ public:
 	void setVec3(const std::string &name, const glm::vec3 pos) const;
 
 private:
+	Texture* setTexture(unsigned int renderTextureType, std::string uniformName);
 	// 检查着色器是否创建成功
 	void checkShaderCreate(unsigned int shader, const char* shaderTypeName);
 	// 检查着色器程序是否创建成功
@@ -56,9 +58,7 @@ private:
 	void createShaderProgram(int shaderCount, ...);
 private:
 	unsigned int m_shaderID;
-	std::vector<std::string> m_texturesName;
-	std::vector<Texture*> m_textures;
-	std::map<std::string, Texture*> m_map_texture;
+	std::vector<Texture::TextureObject> m_texture_objects;
 };
 #endif // !_SHADER_H_
 

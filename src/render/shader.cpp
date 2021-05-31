@@ -115,88 +115,65 @@ void Shader::unbind() const
 	glUseProgram(0);
 }
 
-void Shader::setTexturesName(unsigned int textureNameCount, ...)
+Texture* Shader::setTexture(unsigned int renderTextureType, std::string uniformName)
 {
-	va_list arg;
-	__crt_va_start(arg, textureNameCount);
-	for (int i = 0; i < textureNameCount; i++)
-	{
-		const char *textureName = __crt_va_arg(arg, char *);
-		m_texturesName.push_back(std::string(textureName));
-	}
-	__crt_va_end(arg);
+	Texture::TextureObject textureObj;
+	textureObj.texture_uniform_name = uniformName;
+	textureObj.texture_render_type = renderTextureType;
+	Texture *texture = new Texture();
+	textureObj.texture = texture;
+	m_texture_objects.push_back(textureObj);
+	return texture;
 }
 
-void Shader::setTextures(unsigned int texturesCount, ...)
+void Shader::setTexture(unsigned int renderTextureType, std::string uniformName, std::string textureName)
 {
-	va_list arg;
-	if (m_texturesName.empty())
-	{
-		std::cout << "texturesName is empty......" << std::endl;
-		return;
-	}
-	__crt_va_start(arg, texturesCount);
-	for (int i = 0; i < texturesCount; i++)
-	{
-		const char *textureName = __crt_va_arg(arg, char *);
-		Texture *singlnTexture = new Texture();
-		assert(singlnTexture->load(FileSystem::getInstance()->getAssetPathByName(textureName).c_str(), true));
-		m_textures.push_back(singlnTexture);
-		m_map_texture.insert(std::pair<std::string, Texture *>(textureName, singlnTexture));
-	}
-	__crt_va_end(arg);
+	std::string texturePath = FileSystem::getInstance()->getAssetPathByName(textureName).c_str();
+	Texture *texture = setTexture(renderTextureType, uniformName);
+	texture->load(texturePath.c_str(), true);
 }
 
-void Shader::setMapTextures(std::string mapTexturesName, unsigned int texturesCount, ...)
+void Shader::setTextures(unsigned int renderTextureType, std::vector<std::string> uniformNames, std::vector<std::string> textureNames)
 {
-	va_list arg;
-	std::vector<std::string> textureNames;
-	if (m_texturesName.empty())
+	for(int index = 0; index < uniformNames.size(); index++)
 	{
-		std::cout << "texturesName is empty......" << std::endl;
-		return;
+		setTexture(renderTextureType, uniformNames[index], textureNames[index]);
 	}
-	Texture *mapTexture = new Texture();
-	__crt_va_start(arg, texturesCount);
-	for (int i = 0; i < texturesCount; i++)
-	{
-		const char *textureName = __crt_va_arg(arg, char *);
-		textureNames.push_back(FileSystem::getInstance()->getAssetPathByName(textureName).c_str());
-	}
-	assert(mapTexture->loadCubeMap(textureNames));
-	m_textures.push_back(mapTexture);
-	m_map_texture.insert(std::pair<std::string, Texture *>(mapTexturesName, mapTexture));
-	__crt_va_end(arg);
 }
 
-void Shader::renderTextures(unsigned int renderTextureType, std::vector<std::string> texturesName, std::vector<Texture *> textures)
+void Shader::setTexture(unsigned int renderTextureType, std::string renderSkyboxName, std::vector<std::string> textureNames)
 {
-	if (textures.empty())
+	for(unsigned int index = 0; index < textureNames.size(); index++)
 	{
-		std::cout << "texture render fail......" << std::endl;
-		return;
+		textureNames[index] = FileSystem::getInstance()->getAssetPathByName(textureNames[index]).c_str();
 	}
+	Texture *texture = setTexture(renderTextureType, renderSkyboxName);
+	texture->loadCubeMap(textureNames);
+}
 
-	for (unsigned int index = 0; index < textures.size(); index++)
+void Shader::renderAllTextures()
+{
+	unsigned int index = 0;
+	for (auto textureObj : m_texture_objects)
 	{
-		std::string uniformName = texturesName[index];
 		glActiveTexture(GL_TEXTURE0 + index);
-		setInt(uniformName, index);
-		textures[index]->active(renderTextureType);
+		setInt(textureObj.texture_uniform_name, 0);
+		textureObj.texture->active(textureObj.texture_render_type);
+		index++;
 	}
 }
 
-void Shader::renderTextures(unsigned int renderTextureType)
+void Shader::renderTextureByName(std::string uniformName)
 {
-	renderTextures(renderTextureType, m_texturesName, m_textures);
-}
-
-void Shader::renderTexture(unsigned int renderTextureType, std::string textureName, std::string uniformName)
-{
-	Texture *texture = m_map_texture.at(textureName);
-	glActiveTexture(GL_TEXTURE0);
-	setInt(uniformName, 0);
-	texture->active(renderTextureType);
+	for (auto textureObj : m_texture_objects)
+	{
+		if (textureObj.texture_uniform_name == uniformName)
+		{
+			glActiveTexture(GL_TEXTURE0);
+			setInt(uniformName, 0);
+			textureObj.texture->active(textureObj.texture_render_type);
+		}
+	}
 }
 
 void Shader::setBool(const std::string &name, bool value) const

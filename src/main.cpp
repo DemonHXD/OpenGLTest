@@ -1,4 +1,5 @@
-﻿#include "engine/engine.h"
+﻿#include <glad/glad.h>
+#include "engine/engine.h"
 #include "common/math.h"
 #include "render/texture.h"
 #include "render/shader.h"
@@ -28,23 +29,23 @@ int main()
     {
         return -1;
     }
-    shader->setTexturesName(1, "texture1");
-    shader->setTextures(1, "container2.png");
+
+    shader->setTexture(GL_TEXTURE_2D, "texture1", "container2.png");
 
     Shader *skyboxShader = new Shader();
     if (!skyboxShader->loadShaderAsset("skybox.vs", "skybox.fs"))
     {
         return -1;
     }
-    skyboxShader->setTexturesName(1, "cubemapTexture");
-    skyboxShader->setMapTextures("skyboxTextures", 6, 
+    std::vector<std::string> skyboxTextureNames = {
         "right.jpg",
         "left.jpg",
         "top.jpg",
         "bottom.jpg",
         "front.jpg",
         "back.jpg"
-    );
+    };
+    skyboxShader->setTexture(GL_TEXTURE_CUBE_MAP, "cubemapTexture", skyboxTextureNames);
 
     std::map<std::string, Shader *> shaderMap;
     shaderMap.insert(std::pair<std::string, Shader *>("shader", shader));
