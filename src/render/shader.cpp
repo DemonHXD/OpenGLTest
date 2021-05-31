@@ -133,14 +133,6 @@ void Shader::setTexture(unsigned int renderTextureType, std::string uniformName,
 	texture->load(texturePath.c_str(), true);
 }
 
-void Shader::setTextures(unsigned int renderTextureType, std::vector<std::string> uniformNames, std::vector<std::string> textureNames)
-{
-	for(int index = 0; index < uniformNames.size(); index++)
-	{
-		setTexture(renderTextureType, uniformNames[index], textureNames[index]);
-	}
-}
-
 void Shader::setTexture(unsigned int renderTextureType, std::string renderSkyboxName, std::vector<std::string> textureNames)
 {
 	for(unsigned int index = 0; index < textureNames.size(); index++)
@@ -149,6 +141,14 @@ void Shader::setTexture(unsigned int renderTextureType, std::string renderSkybox
 	}
 	Texture *texture = setTexture(renderTextureType, renderSkyboxName);
 	texture->loadCubeMap(textureNames);
+}
+
+void Shader::setTextures(unsigned int renderTextureType, std::vector<std::string> uniformNames, std::vector<std::string> textureNames)
+{
+	for(int index = 0; index < uniformNames.size(); index++)
+	{
+		setTexture(renderTextureType, uniformNames[index], textureNames[index]);
+	}
 }
 
 void Shader::renderAllTextures()
